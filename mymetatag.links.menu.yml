@@ -1,0 +1,7 @@
+entity.mymetatag.collection:
+  title: Метатеги (кастом)
+  route_name: entity.mymetatag.collection
+  parent: myapi.seo
+  description: 'List site metatags.'
+  weight: 41
+

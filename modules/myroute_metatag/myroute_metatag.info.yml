@@ -1,0 +1,12 @@
+name: myroute_metatag
+description: MyrouteMetatag settings
+package: AAMID
+type: module
+core: 8.x
+version: 1.0
+
+configure: entity.myroute_metatag.collection
+
+dependencies:
+  - token
+  - mymetatag

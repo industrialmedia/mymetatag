@@ -1,0 +1,44 @@
+mymetatag.admin.custom_paths_settings:
+  route_name: mymetatag.admin.custom_paths_settings
+  title: 'Кастомные страницы'
+  base_route: entity.mymetatag.collection
+  weight: 10
+
+mymetatag.admin.add_to_node:
+  route_name: mymetatag.admin.add_to_node
+  title: 'Metatags'
+  base_route: entity.node.canonical
+  weight: 10
+
+mymetatag.admin.add_to_term:
+  route_name: mymetatag.admin.add_to_term
+  title: 'Metatags'
+  base_route: entity.taxonomy_term.canonical
+  weight: 10
+
+mymetatag.admin.add_to_commerce_product:
+  route_name: mymetatag.admin.add_to_commerce_product
+  title: 'Metatags'
+  base_route: entity.commerce_product.canonical
+  weight: 10
+
+mymetatag.admin.add_to_custom_page:
+  class: \Drupal\Core\Menu\LocalTaskDefault
+  deriver: \Drupal\mymetatag\Plugin\Derivative\MymetatagLocalTask
+  weight: 10
+
+entity.mymetatag.collection:
+  route_name: entity.mymetatag.collection
+  title: 'Metatags'
+  base_route: entity.mymetatag.collection
+
+mymetatag.page_edit:
+  route_name: entity.mymetatag.edit_form
+  base_route: entity.mymetatag.edit_form
+  title: Edit
+
+mymetatag.delete_confirm:
+  route_name:  entity.mymetatag.delete_form
+  base_route:  entity.mymetatag.edit_form
+  title: Delete
+  weight: 10

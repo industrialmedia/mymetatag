@@ -1,0 +1,8 @@
+services:
+  myroute_metatag.myroute_metatag_evaluator:
+    class: Drupal\myroute_metatag\MyrouteMetatagEvaluator
+    arguments: ['@context.handler', '@context.repository', '@entity_type.manager']
+
+  myroute_metatag.helper:
+    class: Drupal\myroute_metatag\MyrouteMetatagHelper
+    arguments: ['@router.route_provider', '@token.entity_mapper']

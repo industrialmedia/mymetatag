@@ -1,0 +1,100 @@
+
+mymetatag.admin.custom_paths_settings:
+  path: '/admin/seo/mymetatag/custom-paths-settings'
+  defaults:
+    _form: '\Drupal\mymetatag\Form\CustomPathsSettingsForm'
+    _title: 'Метатеги для кастомных страниц'
+  requirements:
+    _permission: 'administer mymetatag entity'
+
+
+
+mymetatag.admin.add_to_node:
+  path: '/node/{node}/mymetatag'
+  defaults:
+    _controller: '\Drupal\mymetatag\Controller\MymetatagAdminController::addToNode'
+    _title: 'Metatags'
+  requirements:
+    _permission: 'edit mymetatag entity'
+    node: \d+
+  options:
+    _admin_route: TRUE
+    parameters:
+      node:
+        type: entity:node
+
+mymetatag.admin.add_to_term:
+  path: '/taxonomy/term/{taxonomy_term}/mymetatag'
+  defaults:
+    _controller: '\Drupal\mymetatag\Controller\MymetatagAdminController::addToTerm'
+    _title: 'Metatags'
+  requirements:
+    _permission: 'edit mymetatag entity'
+    taxonomy_term: \d+
+  options:
+    _admin_route: TRUE
+
+
+mymetatag.admin.add_to_commerce_product:
+  path: '/product/{commerce_product}/mymetatag'
+  defaults:
+    _controller: '\Drupal\mymetatag\Controller\MymetatagAdminController::addToCommerceProduct'
+    _title: 'Metatags'
+  requirements:
+    _permission: 'edit mymetatag entity'
+    commerce_product: \d+
+  options:
+    _admin_route: TRUE
+
+
+route_callbacks:
+  - '\Drupal\mymetatag\Routing\MymetatagRoutes::routes'
+
+
+
+
+
+entity.mymetatag.collection:
+  path: '/admin/seo/mymetatag'
+  defaults:
+    _entity_list: 'mymetatag'
+    _title: 'Mymetatag List'
+  requirements:
+    _permission: 'administer mymetatag entity'
+
+
+mymetatag.mymetatag_add:
+  path: '/admin/seo/mymetatag/add'
+  defaults:
+    _entity_form: mymetatag.add
+    _title: 'Add metatags'
+  requirements:
+    _entity_create_access: 'mymetatag'
+
+
+
+
+entity.mymetatag.canonical:
+  path: '/admin/seo/mymetatag/{mymetatag}/edit'
+  defaults:
+    _entity_form: mymetatag.edit
+    _title: 'Edit metatags'
+  requirements:
+    _entity_access: 'mymetatag.edit'
+
+entity.mymetatag.edit_form:
+  path: '/admin/seo/mymetatag/{mymetatag}/edit'
+  defaults:
+    _entity_form: mymetatag.edit
+    _title: 'Edit metatags'
+  requirements:
+    _entity_access: 'mymetatag.edit'
+
+entity.mymetatag.delete_form:
+  path: '/admin/seo/mymetatag/{mymetatag}/delete'
+  defaults:
+    _entity_form: mymetatag.delete
+    _title: 'Delete metatags'
+  requirements:
+    _entity_access: 'mymetatag.delete'
+

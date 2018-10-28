@@ -1,0 +1,11 @@
+view mymetatag entity:
+  title: 'View mymetatag entity'
+add mymetatag entity:
+  title: 'Add mymetatag entity'
+edit mymetatag entity:
+  title: 'Edit mymetatag Entity'
+delete mymetatag entity:
+  title: 'Delete mymetatag entity'
+administer mymetatag entity:
+  title: 'Administer mymetatag entity'
+  restrict access: TRUE

@@ -1,0 +1,87 @@
+# Entity
+entity.myroute_metatag.collection:
+  path: '/admin/seo/myroute_metatag/list'
+  defaults:
+    _entity_list: 'myroute_metatag'
+    _title: 'MyrouteMetatag'
+  requirements:
+    _permission: 'administer site configuration'
+
+entity.myroute_metatag.add_form:
+  path: '/admin/seo/myroute_metatag/list/add'
+  defaults:
+    _entity_form: 'myroute_metatag.add'
+    _title: 'Add MyrouteMetatag'
+  requirements:
+    _permission: 'administer site configuration'
+
+entity.myroute_metatag.edit_form:
+  path: '/admin/seo/myroute_metatag/list/{myroute_metatag}'
+  defaults:
+    _entity_form: 'myroute_metatag.edit'
+    _title: 'Edit MyrouteMetatag'
+  requirements:
+    _permission: 'administer site configuration'
+
+entity.myroute_metatag.delete_form:
+  path: '/admin/seo/myroute_metatag/list/{myroute_metatag}/delete'
+  defaults:
+    _entity_form: 'myroute_metatag.delete'
+    _title: 'Delete MyrouteMetatag'
+  requirements:
+    _permission: 'administer site configuration'
+    
+
+
+# Autocomplete
+myroute_metatag.router_autocomplete:
+  path: '/admin/seo/myroute_metatag/router-autocomplete'
+  defaults:
+    _title: 'Router autocomplete'
+    _controller: '\Drupal\myroute_metatag\Controller\MyrouteMetatagAutocomplete::getRouterAutocomplete'
+  requirements:
+    _permission: 'access content'
+
+
+
+# Conditions
+myroute_metatag.condition_select:
+  path: '/admin/seo/myroute_metatag/list/{myroute_metatag}/condition/select'
+  defaults:
+    _controller: '\Drupal\myroute_metatag\Controller\MyrouteMetatagConditionController::selectCondition'
+    _title: 'Select condition'
+  requirements:
+    _permission: 'administer site configuration'
+
+myroute_metatag.condition_add:
+  path: '/admin/seo/myroute_metatag/list/{myroute_metatag}/condition/add/{condition_id}'
+  defaults:
+    _form: '\Drupal\myroute_metatag\Form\ConditionAddForm'
+    _title: 'Add new condition'
+  requirements:
+    _permission: 'administer site configuration'
+
+myroute_metatag.condition_edit:
+  path: '/admin/seo/myroute_metatag/list/{myroute_metatag}/condition/edit/{condition_id}'
+  defaults:
+    _form: '\Drupal\myroute_metatag\Form\ConditionEditForm'
+    _title: 'Edit Condition'
+  requirements:
+    _permission: 'administer site configuration'
+
+myroute_metatag.condition_delete:
+  path: '/admin/seo/myroute_metatag/list/{myroute_metatag}/condition/delete/{condition_id}'
+  defaults:
+    _form: '\Drupal\myroute_metatag\Form\ConditionDeleteForm'
+    _title: 'Delete condition'
+  requirements:
+    _permission: 'administer site configuration'
+    
+    
+
+
+
+
+
+
+

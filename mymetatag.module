@@ -1,0 +1,160 @@
+<?php
+
+use Drupal\mybattery\MybatteryHelper;
+
+
+/**
+ * Implements hook_theme_registry_alter().
+ * @param array $theme_registry
+ */
+function mymetatag_theme_registry_alter(&$theme_registry) {
+
+  foreach ($theme_registry['block']['preprocess functions'] as $key => $name) {
+    if ($name == 'mymetatag_preprocess_block') {
+      unset($theme_registry['block']['preprocess functions'][$key]);
+      $theme_registry['block']['preprocess functions'][] = 'mymetatag_preprocess_block';
+    }
+  }
+
+  foreach ($theme_registry['html']['preprocess functions'] as $key => $name) {
+    if ($name == 'mymetatag_preprocess_html') {
+      unset($theme_registry['html']['preprocess functions'][$key]);
+      $theme_registry['html']['preprocess functions'][] = 'mymetatag_preprocess_html';
+    }
+  }
+
+}
+
+
+/**
+ * Implements hook_preprocess_html().
+ * @param array $variables
+ */
+function mymetatag_preprocess_html(&$variables) {
+
+
+  /* @var $mymetatag_storage \Drupal\mymetatag\MymetatagStorageInterface */
+  $mymetatag_storage = \Drupal::entityTypeManager()->getStorage('mymetatag');
+  /* @var $mymetatag \Drupal\mymetatag\Entity\Mymetatag */
+  $mymetatag = $mymetatag_storage->getMymetatagBySourcePath();
+  if ($mymetatag) {
+
+    // head_title
+    if (!empty($mymetatag->getHeadTitle())) {
+      $variables['head_title'] = $mymetatag->getHeadTitle();
+    }
+
+
+    // description
+    if (!empty($mymetatag->getDescription())) {
+      $description = [
+        '#tag' => 'meta',
+        '#attributes' => [
+          'name' => 'description',
+          'content' => $mymetatag->getDescription(),
+        ],
+      ];
+      $variables['#attached']['html_head'][] = [$description, 'description'];
+    }
+
+  }
+
+
+  // alternate
+  $sites = MybatteryHelper::get_sites();
+  $host = $_SERVER['HTTP_HOST'];
+  if (isset($sites[$host])) {
+    $current_uri = \Drupal::request()->getRequestUri();
+    $alternate_ua = [
+      '#tag' => 'link',
+      '#attributes' => [
+        'rel' => 'alternate',
+        'href' => 'https://' . $sites[$host] . $current_uri,
+        'hreflang' => 'ru-ua',
+      ],
+    ];
+    $variables['#attached']['html_head'][] = [$alternate_ua, 'alternate_ua'];
+    $alternate_ru = [
+      '#tag' => 'link',
+      '#attributes' => [
+        'rel' => 'alternate',
+        'href' => 'https://' . $host . $current_uri,
+        'hreflang' => 'ru-ru',
+      ],
+    ];
+    $variables['#attached']['html_head'][] = [$alternate_ru, 'alternate_ru'];
+  }
+
+
+  // Хвост номер страницы
+
+  $page_text = '';
+  if (!empty($_GET['page'])) {
+    $n = 1 + $_GET['page'];
+    $page_text = ' (страница ' . $n . ')';
+  }
+
+  if (!empty($variables['head_title']) && $page_text) {
+    if (is_array($variables['head_title'])) {
+      $variables['head_title']['name'] .= $page_text;
+    }
+    else {
+      $variables['head_title'] .= $page_text;
+    }
+  }
+
+  if (!empty($variables['#attached']['html_head'])) {
+    foreach ($variables['#attached']['html_head'] as $key => $value) {
+      if (!empty($value[1])) {
+        $name = $value[1];
+        switch ($name) {
+          case 'description':
+            if (!empty($variables['#attached']['html_head'][$key][0]['#attributes']['content']) && $page_text) {
+              $variables['#attached']['html_head'][$key][0]['#attributes']['content'] .= $page_text;
+            }
+            break;
+        }
+      }
+    }
+  }
+
+
+}
+
+/**
+ * Implements hook_preprocess_block().
+ * @param array $variables
+ */
+function mymetatag_preprocess_block(&$variables) {
+  /* Сделано в MyrouteMetatagTitleResolver - для изменения заголовка не только в блоке
+  if ('page_title_block' == $variables['plugin_id']) {
+    /**  @var $mymetatag_storage \Drupal\mymetatag\MymetatagStorageInterface
+    $mymetatag_storage = \Drupal::entityTypeManager()->getStorage('mymetatag');
+    /* @var $mymetatag \Drupal\mymetatag\Entity\Mymetatag
+    $mymetatag = $mymetatag_storage->getMymetatagBySourcePath();
+    if ($mymetatag) {
+      if (!empty($mymetatag->getTitleH1())) {
+        $variables['content']['#title'] = $mymetatag->getTitleH1();
+      }
+    }
+  }
+  */
+}
+
+
+/**
+ * Implements hook_page_attachments_alter().
+ * @param array $page
+ */
+function mymetatag_page_attachments_alter(array &$page) {
+  foreach ($page['#attached']['html_head'] as $key => $value) {
+    if (!empty($value[1])) {
+      $name = $value[1];
+      switch ($name) {
+        case 'system_meta_generator':
+          unset($page['#attached']['html_head'][$key]);
+          break;
+      }
+    }
+  }
+}

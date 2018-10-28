@@ -1,0 +1,51 @@
+<?php
+
+use Drupal\myroute_metatag\Entity\MyrouteMetatag;
+
+
+/**
+ * Implements hook_preprocess_html().
+ * @param $variables
+ */
+function myroute_metatag_preprocess_html(&$variables) {
+  $route_match = \Drupal::routeMatch();
+  $route_name = $route_match->getRouteName();
+  if ($route_name && $myroute_metatag_id = \Drupal::service('myroute_metatag.myroute_metatag_evaluator')
+      ->evaluateByRouteName($route_name)
+  ) {
+    /** @var \Drupal\myroute_metatag\Entity\MyrouteMetatag $myroute_metatag */
+    $myroute_metatag = MyrouteMetatag::load($myroute_metatag_id);
+    $items = $myroute_metatag->getItems();
+    if (!empty($items['head_title']) || !empty($items['description'])) {
+      $token_types = \Drupal::service('myroute_metatag.helper')
+        ->getTokenTypesByRouteName($route_name);
+      $data = [];
+      foreach ($token_types as $token_type => $parameter_name) {
+        $parameter = $route_match->getParameter($parameter_name);
+        $data[$token_type] = $parameter;
+      }
+      if (!empty($items['head_title'])) {
+        $items['head_title'] = \Drupal::service('token')
+          ->replace($items['head_title'], $data, array('clear' => TRUE));
+        $variables['head_title'] = $items['head_title'];
+      }
+      if (!empty($items['description'])) {
+        $items['description'] = \Drupal::service('token')
+          ->replace($items['description'], $data, array('clear' => TRUE));
+        $description = [
+          '#tag' => 'meta',
+          '#attributes' => [
+            'name' => 'description',
+            'content' => $items['description'],
+          ],
+        ];
+        $variables['#attached']['html_head'][] = [$description, 'description'];
+      }
+    }
+  }
+}
+
+
+
+
+
