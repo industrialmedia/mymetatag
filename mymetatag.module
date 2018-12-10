@@ -58,33 +58,7 @@ function mymetatag_preprocess_html(&$variables) {
     }
 
   }
-
-
-  // alternate
-  $sites = MybatteryHelper::get_sites();
-  $host = $_SERVER['HTTP_HOST'];
-  if (isset($sites[$host])) {
-    $current_uri = \Drupal::request()->getRequestUri();
-    $alternate_ua = [
-      '#tag' => 'link',
-      '#attributes' => [
-        'rel' => 'alternate',
-        'href' => 'https://' . $sites[$host] . $current_uri,
-        'hreflang' => 'ru-ua',
-      ],
-    ];
-    $variables['#attached']['html_head'][] = [$alternate_ua, 'alternate_ua'];
-    $alternate_ru = [
-      '#tag' => 'link',
-      '#attributes' => [
-        'rel' => 'alternate',
-        'href' => 'https://' . $host . $current_uri,
-        'hreflang' => 'ru-ru',
-      ],
-    ];
-    $variables['#attached']['html_head'][] = [$alternate_ru, 'alternate_ru'];
-  }
-
+  
 
   // Хвост номер страницы
 

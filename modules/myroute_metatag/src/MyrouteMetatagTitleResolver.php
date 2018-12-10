@@ -13,6 +13,7 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Symfony\Component\HttpKernel\Controller\ArgumentResolverInterface;
 use Drupal\Core\Utility\Token;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Url;
 
 class MyrouteMetatagTitleResolver extends TitleResolver  {
 
@@ -97,13 +98,20 @@ class MyrouteMetatagTitleResolver extends TitleResolver  {
   public function getTitle(Request $request, Route $route) {
     $route_title = parent::getTitle($request, $route);
 
+
     // Одиночный метатег
-    if ($mymetatag = $this->mymetatagStorage->getMymetatagBySourcePath()) {
+    $url = Url::createFromRequest($request);
+
+    $source_path = '/' . $url->getInternalPath();
+
+
+    if ($mymetatag = $this->mymetatagStorage->getMymetatagBySourcePath($source_path)) {
       if (!empty($mymetatag->getTitleH1())) {
         $route_title = $mymetatag->getTitleH1();
       }
     }
     else { // По шаблону
+
       $route_match = RouteMatch::createFromRequest($request);
       $route_name = $route_match->getRouteName();
       if ($route_name && $myroute_metatag_id = $this->myrouteMetatagEvaluator->evaluateByRouteName($route_name)) {
@@ -122,7 +130,9 @@ class MyrouteMetatagTitleResolver extends TitleResolver  {
           }
         }
       }
+
     }
+  
     return $route_title;
   }
 
