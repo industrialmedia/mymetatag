@@ -133,11 +133,10 @@ class MyrouteMetatagForm extends EntityForm implements ContainerInjectionInterfa
       '#maxlength' => 255,
     ];
     $form['items_section']['items']['head_title'] = [
-      '#type' => 'textfield',
+      '#type' => 'textarea',
       '#title' => 'Head title',
       '#default_value' => !empty($items['head_title']) ? $items['head_title'] : '',
-      '#size' => 160,
-      '#maxlength' => 255,
+      '#rows' => 2,
     ];
     $form['items_section']['items']['description'] = [
       '#type' => 'textarea',
