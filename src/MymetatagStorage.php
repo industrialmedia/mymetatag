@@ -122,21 +122,22 @@ class MymetatagStorage extends SqlContentEntityStorage implements MymetatagStora
   /**
    * {@inheritdoc}
    */
-  public function getCustomPaths() {
+  public function getCustomPaths($get_route_name = TRUE) {
+
     $config = $this->configFactory->get('mymetatag.settings');
     $paths = $config->get('custom_paths.paths');
     $new_paths = [];
     if ($paths) {
       foreach ($paths as $path) {
-        if ($routes = $this->routeProvider->getRoutesByPattern($path)) {
-          foreach ($routes->all() as $route_name => $route) {
-            if ($route->getPath() == $path) {
-              $path_name = substr($path, 1);
-              $path_name = str_replace('/', '_', $path_name);
-              $new_paths[$path] = [
-                'path_name' => $path_name,
-                'route_name' => $route_name,
-              ];
+        $path_name = substr($path, 1);
+        $path_name = str_replace('/', '_', $path_name);
+        $new_paths[$path]['path_name'] = $path_name;
+        if ($get_route_name) {
+          if ($routes = $this->routeProvider->getRoutesByPattern($path)) {
+            foreach ($routes->all() as $route_name => $route) {
+              if ($route->getPath() == $path) {
+                $new_paths[$path]['route_name'] = $route_name;
+              }
             }
           }
         }

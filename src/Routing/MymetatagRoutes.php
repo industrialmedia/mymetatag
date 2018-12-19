@@ -49,7 +49,7 @@ class MymetatagRoutes implements ContainerInjectionInterface {
    */
   public function routes() {
     $routes = [];
-    $paths = $this->mymetatagStorage->getCustomPaths();
+    $paths = $this->mymetatagStorage->getCustomPaths(FALSE);
     if ($paths) {
       foreach ($paths as $path => $value) {
         $path_name = $value['path_name'];
