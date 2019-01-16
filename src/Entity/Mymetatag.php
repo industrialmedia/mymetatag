@@ -202,6 +202,40 @@ class Mymetatag extends ContentEntityBase implements MymetatagInterface {
     return $this;
   }
 
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSeoTextTitle() {
+    return $this->get('seo_text_title')->value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setSeoTextTitle($seo_text_title) {
+    $this->set('seo_text_title', $seo_text_title);
+    return $this;
+  }
+
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSeoText() {
+    return $this->get('seo_text')->value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setSeoText($seo_text) {
+    $this->set('seo_text', $seo_text);
+    return $this;
+  }
+
+
+
   /**
    * {@inheritdoc}
    */
@@ -299,6 +333,16 @@ class Mymetatag extends ContentEntityBase implements MymetatagInterface {
 
     $fields['description'] = BaseFieldDefinition::create('string_long')
       ->setLabel(t('Description'))
+      ->setDisplayOptions('form', [
+        'type' => 'text_textfield',
+        'weight' => 0,
+      ])
+      ->setDisplayConfigurable('form', TRUE);
+
+
+    $fields['seo_text_title'] = BaseFieldDefinition::create('string')
+      ->setLabel(t('Seo text title'))
+      ->setSetting('max_length', 255)
       ->setDisplayOptions('form', [
         'type' => 'text_textfield',
         'weight' => 0,

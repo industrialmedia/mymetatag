@@ -167,7 +167,52 @@ interface MymetatagInterface extends ContentEntityInterface, EntityOwnerInterfac
   public function setTitleH1($title_h1);
 
 
+
+  /**
+   * Gets the seo_text_title.
+   *
+   * @return string
+   *   seo_text_title of the mymetatag.
+   */
+  public function getSeoTextTitle();
+
+
+  /**
+   * Sets the mymetatag seo_text_title.
+   *
+   * @param string $seo_text_title
+   *   The mymetatag seo_text_title.
+   *
+   * @return \Drupal\mymetatag\MymetatagInterface
+   *   The called mymetatag entity.
+   */
+  public function setSeoTextTitle($seo_text_title);
+
+
+
+
+  /**
+   * Gets the seo_text.
+   *
+   * @return string
+   *   seo_text of the mymetatag.
+   */
+  public function getSeoText();
+
+
+  /**
+   * Sets the mymetatag seo_text.
+   *
+   * @param string $seo_text
+   *   The mymetatag seo_text.
+   *
+   * @return \Drupal\mymetatag\MymetatagInterface
+   *   The called mymetatag entity.
+   */
+  public function setSeoText($seo_text);
   
+
+
   
 }
 
