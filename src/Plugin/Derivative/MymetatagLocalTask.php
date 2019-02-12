@@ -50,19 +50,21 @@ class MymetatagLocalTask extends DeriverBase implements ContainerDeriverInterfac
     $paths = $this->mymetatagStorage->getCustomPaths();
     if ($paths) {
       foreach ($paths as $path => $value) {
-        $route_name = $value['route_name'];
-        $path_name = $value['path_name'];
-        $this->derivatives[$route_name] = [
-          'title' => 'View',
-          'route_name' => $route_name,
-          'base_route' => $route_name,
-        ];
-        $this->derivatives['mymetatag.admin.add_to_custom_page.' . $path_name] = [
-          'title' => 'Metatags',
-          'route_name' => 'mymetatag.admin.add_to_custom_page.' . $path_name,
-          'base_route' => $route_name,
-          'weight' => 10,
-        ];
+        if (!empty($value['route_name']) && !empty($value['path_name'])) {
+          $route_name = $value['route_name'];
+          $path_name = $value['path_name'];
+          $this->derivatives[$route_name] = [
+            'title' => 'View',
+            'route_name' => $route_name,
+            'base_route' => $route_name,
+          ];
+          $this->derivatives['mymetatag.admin.add_to_custom_page.' . $path_name] = [
+            'title' => 'Metatags',
+            'route_name' => 'mymetatag.admin.add_to_custom_page.' . $path_name,
+            'base_route' => $route_name,
+            'weight' => 10,
+          ];
+        }
       }
     }
     return $this->derivatives;

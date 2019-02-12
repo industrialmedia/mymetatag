@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Component\Datetime\TimeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Routing\RouteProviderInterface;
+use Drupal\Core\Url;
 
 /**
  * Form controller for the mymetatag entity edit forms.
@@ -107,25 +108,8 @@ class MymetatagForm extends ContentEntityForm {
     }
 
     // Redirect
-    //$form_state->setRedirectUrl($mymetatag->entity->toUrl('collection'));
-    if ($mymetatag->getSourceEntityId() && $mymetatag->getSourceEntityType() && $this->entityTypeManager->getStorage($mymetatag->getSourceEntityType())
-    ) {
-      $entity = $this->entityTypeManager->getStorage($mymetatag->getSourceEntityType())
-        ->load($mymetatag->getSourceEntityId());
-      if (!empty($entity)) {
-        $form_state->setRedirectUrl($entity->toUrl());
-      }
-    }
-    else {
-      if ($routes = $this->routeProvider->getRoutesByPattern($mymetatag->getSourcePath())) {
-        foreach ($routes->all() as $route_name => $route) {
-          if ($route->getPath() == $mymetatag->getSourcePath()) {
-            $form_state->setRedirect($route_name);
-          }
-        }
-      }
-    }
-
+    $url = Url::fromUserInput($mymetatag->getSourcePath());
+    $form_state->setRedirectUrl($url);
 
     return $status;
   }

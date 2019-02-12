@@ -10,6 +10,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityManagerInterface;
 use Drupal\Core\Routing\RouteProviderInterface;
+use Drupal\Core\Url;
 
 
 /**
@@ -91,24 +92,9 @@ class MymetatagListBuilder extends EntityListBuilder {
   public function buildRow(EntityInterface $mymetatag) {
     /* @var $mymetatag \Drupal\mymetatag\Entity\Mymetatag */
     $row['id'] = $mymetatag->id();
-    $path_link = $mymetatag->getSourcePath();
-    if ($mymetatag->getSourceEntityId() && $mymetatag->getSourceEntityType() && $this->entityManager->getStorage($mymetatag->getSourceEntityType())
-    ) {
-      $entity = $this->entityManager->getStorage($mymetatag->getSourceEntityType())
-        ->load($mymetatag->getSourceEntityId());
-      if (!empty($entity)) {
-        $path_link = Link::fromTextAndUrl($mymetatag->getSourcePath(), $entity->toUrl());
-      }
-    }
-    else {
-      if ($routes = $this->routeProvider->getRoutesByPattern($mymetatag->getSourcePath())) {
-        foreach ($routes->all() as $route_name => $route) {
-          if ($route->getPath() == $mymetatag->getSourcePath()) {
-            $path_link = Link::createFromRoute($mymetatag->getSourcePath(), $route_name);
-          }
-        }
-      }
-    }
+    $source_path = $mymetatag->getSourcePath();
+    $url = Url::fromUserInput($source_path);
+    $path_link = Link::fromTextAndUrl($source_path, $url);
     $row['path'] = $path_link;
     return $row + parent::buildRow($mymetatag);
   }

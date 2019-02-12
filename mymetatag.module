@@ -64,6 +64,7 @@ function mymetatag_preprocess_html(&$variables) {
 
   $page_text = '';
   if (!empty($_GET['page'])) {
+    $_GET['page'] = (int) $_GET['page'];
     $n = 1 + $_GET['page'];
     $page_text = ' (страница ' . $n . ')';
   }
