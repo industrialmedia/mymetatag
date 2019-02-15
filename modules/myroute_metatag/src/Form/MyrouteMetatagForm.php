@@ -234,6 +234,7 @@ class MyrouteMetatagForm extends EntityForm implements ContainerInjectionInterfa
    */
   public function save(array $form, FormStateInterface $form_state) {
     $myroute_metatag = $this->entity;
+    $is_new = $myroute_metatag->isNew();
     $status = $myroute_metatag->save();
     if ($status) {
       $this->messenger->addStatus($this->t('Saved the %label MyrouteMetatag.', array(
@@ -245,7 +246,12 @@ class MyrouteMetatagForm extends EntityForm implements ContainerInjectionInterfa
         '%label' => $myroute_metatag->label(),
       )));
     }
-    $form_state->setRedirectUrl($myroute_metatag->toUrl('collection'));
+    if ($is_new) {
+      $form_state->setRedirectUrl($myroute_metatag->toUrl('edit-form'));
+    }
+    else {
+      $form_state->setRedirectUrl($myroute_metatag->toUrl('collection'));
+    }
   }
 
 
