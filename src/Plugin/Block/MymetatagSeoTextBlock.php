@@ -7,7 +7,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\mymetatag\MymetatagStorage;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-
+use Drupal\Core\Render\RendererInterface;
 
 /**
  * @Block(
@@ -17,13 +17,19 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class MymetatagSeoTextBlock extends BlockBase implements ContainerFactoryPluginInterface {
 
-  
+
   /**
    * The mymetatag storage.
    *
    * @var \Drupal\mymetatag\MymetatagStorageInterface
    */
   protected $mymetatagStorage;
+
+
+  /**
+   * @var \Drupal\Core\Render\RendererInterface
+   */
+  protected $renderer;
 
   /**
    * Constructs a new CartBlock.
@@ -36,24 +42,30 @@ class MymetatagSeoTextBlock extends BlockBase implements ContainerFactoryPluginI
    *   The plugin implementation definition.
    * @param \Drupal\mymetatag\MymetatagStorage $mymetatag_storage
    *   The database mymetatag storage.
+   * @param \Drupal\Core\Render\RendererInterface $renderer
+   *   The renderer.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, MymetatagStorage $mymetatag_storage) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, MymetatagStorage $mymetatag_storage, RendererInterface $renderer) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->mymetatagStorage = $mymetatag_storage;
+    $this->renderer = $renderer;
   }
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    /* @var \Drupal\Core\Render\RendererInterface $renderer */
+    $renderer = $container->get('renderer');
+    
     return new static(
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('entity_type.manager')->getStorage('mymetatag')
+      $container->get('entity_type.manager')->getStorage('mymetatag'),
+      $renderer
     );
   }
-
 
 
   /**
@@ -105,7 +117,16 @@ class MymetatagSeoTextBlock extends BlockBase implements ContainerFactoryPluginI
 
     $build['#cache']['tags'] = $mymetatag->getCacheTags();
 
-    $seo_text = trim($mymetatag->getSeoText());
+
+    $seo_text = $mymetatag->get('seo_text')->view([
+      'type' => 'text_default',
+      'label' => 'hidden',
+      'settings' => [],
+    ]);
+    $seo_text = $this->renderer->render($seo_text);
+    $seo_text = trim($seo_text);
+
+
     if (empty($seo_text)) {
       return $build;
     }
@@ -116,7 +137,7 @@ class MymetatagSeoTextBlock extends BlockBase implements ContainerFactoryPluginI
       $build['#attributes']['class'][] = 'block-seo-text-has-title';
       $build['seo_text_title'] = [
         '#type' => 'markup',
-        '#markup' => '<div class="seo-text-title"><div class="seo-text-title-in">' . $seo_text_title. '</div></div>',
+        '#markup' => '<div class="seo-text-title"><div class="seo-text-title-in">' . $seo_text_title . '</div></div>',
       ];
     }
     $build['seo_text'] = [
@@ -125,8 +146,6 @@ class MymetatagSeoTextBlock extends BlockBase implements ContainerFactoryPluginI
     ];
     return $build;
   }
-
-
 
 
 }
