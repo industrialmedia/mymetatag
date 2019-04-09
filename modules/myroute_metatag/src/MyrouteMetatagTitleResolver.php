@@ -15,7 +15,7 @@ use Drupal\Core\Utility\Token;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Url;
 
-class MyrouteMetatagTitleResolver extends TitleResolver  {
+class MyrouteMetatagTitleResolver extends TitleResolver {
 
 
   /**
@@ -42,7 +42,6 @@ class MyrouteMetatagTitleResolver extends TitleResolver  {
   protected $myrouteMetatagHelper;
 
 
-
   /**
    * The entity type manager.
    *
@@ -57,9 +56,6 @@ class MyrouteMetatagTitleResolver extends TitleResolver  {
    * @var \Drupal\mymetatag\MymetatagStorageInterface
    */
   protected $mymetatagStorage;
-
-
-
 
 
   /**
@@ -90,8 +86,6 @@ class MyrouteMetatagTitleResolver extends TitleResolver  {
   }
 
 
-
-
   /**
    * {@inheritdoc}
    */
@@ -100,18 +94,19 @@ class MyrouteMetatagTitleResolver extends TitleResolver  {
 
 
     // Одиночный метатег
-    $url = Url::createFromRequest($request);
+    // $url = Url::createFromRequest($request); Не всегда работает (пример 404)
+    $route_name = $request->attributes->get('_route');
+    $route_parameters = $request->attributes->get('_raw_variables')->all();
+    $url = Url::fromRoute($route_name, $route_parameters);
+
 
     $source_path = '/' . $url->getInternalPath();
-
-
     if ($mymetatag = $this->mymetatagStorage->getMymetatagBySourcePath($source_path)) {
       if (!empty($mymetatag->getTitleH1())) {
         $route_title = $mymetatag->getTitleH1();
       }
     }
     else { // По шаблону
-
       $route_match = RouteMatch::createFromRequest($request);
       $route_name = $route_match->getRouteName();
       if ($route_name && $myroute_metatag_id = $this->myrouteMetatagEvaluator->evaluateByRouteName($route_name)) {
@@ -130,9 +125,8 @@ class MyrouteMetatagTitleResolver extends TitleResolver  {
           }
         }
       }
-
     }
-  
+
     return $route_title;
   }
 
