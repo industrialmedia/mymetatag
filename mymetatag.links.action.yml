@@ -1,5 +1,5 @@
 mymetatag.mymetatag_add:
   route_name: mymetatag.mymetatag_add
-  title: 'Add metatags'
+  title: 'Добавить метатеги'
   appears_on:
     - entity.mymetatag.collection

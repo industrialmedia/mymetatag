@@ -210,7 +210,29 @@ interface MymetatagInterface extends ContentEntityInterface, EntityOwnerInterfac
    *   The called mymetatag entity.
    */
   public function setSeoText($seo_text);
+
   
+
+  /**
+   * Gets the noindex.
+   *
+   * @return int
+   *   noindex of the mymetatag.
+   */
+  public function getNoindex();
+
+
+  /**
+   * Sets the mymetatag noindex.
+   *
+   * @param int $noindex
+   *   The mymetatag noindex.
+   *
+   * @return \Drupal\mymetatag\MymetatagInterface
+   *   The called mymetatag entity.
+   */
+  public function setNoindex($noindex);
+
 
 
   

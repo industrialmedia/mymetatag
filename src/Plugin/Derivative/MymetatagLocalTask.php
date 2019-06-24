@@ -54,12 +54,12 @@ class MymetatagLocalTask extends DeriverBase implements ContainerDeriverInterfac
           $route_name = $value['route_name'];
           $path_name = $value['path_name'];
           $this->derivatives[$route_name] = [
-            'title' => 'View',
+            'title' => t('View'),
             'route_name' => $route_name,
             'base_route' => $route_name,
           ];
           $this->derivatives['mymetatag.admin.add_to_custom_page.' . $path_name] = [
-            'title' => 'Metatags',
+            'title' => 'Метатеги',
             'route_name' => 'mymetatag.admin.add_to_custom_page.' . $path_name,
             'base_route' => $route_name,
             'weight' => 10,

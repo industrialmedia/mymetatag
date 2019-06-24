@@ -206,6 +206,22 @@ class Mymetatag extends ContentEntityBase implements MymetatagInterface {
   /**
    * {@inheritdoc}
    */
+  public function getNoindex() {
+    return $this->get('noindex')->value;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setNoindex($noindex) {
+    $this->set('noindex', $noindex);
+    return $this;
+  }
+
+
+  /**
+   * {@inheritdoc}
+   */
   public function getSeoTextTitle() {
     return $this->get('seo_text_title')->value;
   }
@@ -233,7 +249,6 @@ class Mymetatag extends ContentEntityBase implements MymetatagInterface {
     $this->set('seo_text', $seo_text);
     return $this;
   }
-
 
 
   /**
@@ -313,48 +328,63 @@ class Mymetatag extends ContentEntityBase implements MymetatagInterface {
       ->setSetting('unsigned', TRUE);
 
     $fields['title_h1'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Title h1'))
+      ->setLabel('H1')
       ->setSetting('max_length', 255)
       ->setDisplayOptions('form', [
         'type' => 'text_textfield',
-        'weight' => 0,
+        'weight' => 1,
       ])
       ->setDisplayConfigurable('form', TRUE);
 
     $fields['head_title'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Head title'))
+      ->setLabel('Тайтл')
       ->setSetting('max_length', 255)
       ->setDisplayOptions('form', [
         'type' => 'text_textfield',
-        'weight' => 0,
+        'weight' => 2,
       ])
       ->setDisplayConfigurable('form', TRUE);
 
 
     $fields['description'] = BaseFieldDefinition::create('string_long')
-      ->setLabel(t('Description'))
+      ->setLabel('Дескрипшн')
       ->setDisplayOptions('form', [
         'type' => 'text_textfield',
-        'weight' => 0,
+        'weight' => 3,
       ])
       ->setDisplayConfigurable('form', TRUE);
 
 
     $fields['seo_text_title'] = BaseFieldDefinition::create('string')
-      ->setLabel(t('Seo text title'))
+      ->setLabel('СЕО-текст (заголовок)')
       ->setSetting('max_length', 255)
       ->setDisplayOptions('form', [
         'type' => 'text_textfield',
-        'weight' => 0,
+        'weight' => 4,
       ])
       ->setDisplayConfigurable('form', TRUE);
 
 
     $fields['seo_text'] = BaseFieldDefinition::create('text_long')
-      ->setLabel(t('Seo text'))
+      ->setLabel('СЕО-текст')
       ->setDisplayOptions('form', [
         'type' => 'text_textfield',
-        'weight' => 0,
+        'weight' => 5,
+      ])
+      ->setDisplayConfigurable('form', TRUE);
+
+    $fields['noindex'] = BaseFieldDefinition::create('list_integer')
+      ->setLabel(t('Noindex'))
+      ->setDefaultValue(0)
+      ->setSetting('unsigned', TRUE)
+      ->setSetting('allowed_values', [
+        0 => '',
+        1 => 'Noindex, follow',
+        2 => 'Noindex, nofollow',
+      ])
+      ->setDisplayOptions('form', [
+        'type' => 'options_select',
+        'weight' => 6,
       ])
       ->setDisplayConfigurable('form', TRUE);
 

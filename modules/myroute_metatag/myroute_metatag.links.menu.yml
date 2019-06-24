@@ -1,6 +1,6 @@
 entity.myroute_metatag.collection:
-  title: 'Метатеги (шаблоны)'
-  description: 'Список метатегов по шаблону'
+  title: 'Метатеги по шаблонам'
+  description: 'Список шаблонов метатегов'
   route_name: entity.myroute_metatag.collection
   parent: myapi.seo
   weight: 40

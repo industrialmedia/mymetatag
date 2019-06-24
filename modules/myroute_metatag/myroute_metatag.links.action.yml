@@ -1,7 +1,5 @@
-
 entity.myroute_metatag.add_form:
   route_name: 'entity.myroute_metatag.add_form'
-  title: 'Add MyrouteMetatag'
+  title: 'Добавить шаблон'
   appears_on:
     - entity.myroute_metatag.collection
-

@@ -5,13 +5,8 @@ namespace Drupal\mymetatag;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityListBuilder;
 use Drupal\Core\Link;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Entity\EntityTypeInterface;
-use Drupal\Core\Entity\EntityStorageInterface;
-use Drupal\Core\Entity\EntityManagerInterface;
-use Drupal\Core\Routing\RouteProviderInterface;
 use Drupal\Core\Url;
-
+use Drupal\views\Plugin\views\field\FieldPluginBase;
 
 /**
  * Provides a list controller for mymetatag entity.
@@ -19,59 +14,17 @@ use Drupal\Core\Url;
  */
 class MymetatagListBuilder extends EntityListBuilder {
 
-  /**
-   * The entity manager.
-   *
-   * @var \Drupal\Core\Entity\EntityManagerInterface
-   */
-  protected $entityManager;
-
-
-  /**
-   * The route provider.
-   *
-   * @var \Drupal\Core\Routing\RouteProviderInterface
-   */
-  protected $routeProvider;
-
-
-  /**
-   * Constructs a new ShippingMethodListBuilder object.
-   *
-   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
-   *   The entity type definition.
-   * @param \Drupal\Core\Entity\EntityStorageInterface $storage
-   *   The entity storage.
-   * @param \Drupal\Core\Entity\EntityManagerInterface $entity_manager
-   *   The entity manager.
-   * @param \Drupal\Core\Routing\RouteProviderInterface $route_provider
-   *   The route provider.
-   */
-  public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $storage, EntityManagerInterface $entity_manager, RouteProviderInterface $route_provider) {
-    parent::__construct($entity_type, $storage);
-    $this->entityManager = $entity_manager;
-    $this->routeProvider = $route_provider;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
-    return new static(
-      $entity_type,
-      $container->get('entity.manager')->getStorage($entity_type->id()),
-      $container->get('entity.manager'),
-      $container->get('router.route_provider')
-    );
-  }
-
-
+  
   /**
    * {@inheritdoc}
    */
   public function render() {
+    $link = Link::createFromRoute('метатеги по шаблонам', 'entity.myroute_metatag.collection');
+    $link = $link->toString();
     $build['description'] = [
-      '#markup' => 'Список метатегов',
+      '#markup' => '<p>Метатеги для конкретной страницы имеют больший приоритет чем ' . $link . ', 
+                    поэтому они будут использованы даже если есть шаблон для этих страниц.<br />
+                    Для страницы можно указать: <strong>h1, тайтл, дескрипшен, сео-текст, noindex</strong></p>',
     ];
     $build += parent::render();
     return $build;
@@ -81,8 +34,12 @@ class MymetatagListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildHeader() {
-    $header['id'] = $this->t('MetatagID');
+    $header['id'] = $this->t('ID');
     $header['path'] = $this->t('Path');
+    $header['title_h1'] = $this->t('H1');
+    $header['head_title'] = $this->t('Head title');
+    $header['description'] = $this->t('Description');
+    $header['seo_text'] = $this->t('Seo text');
     return $header + parent::buildHeader();
   }
 
@@ -96,7 +53,22 @@ class MymetatagListBuilder extends EntityListBuilder {
     $url = Url::fromUserInput($source_path);
     $path_link = Link::fromTextAndUrl($source_path, $url);
     $row['path'] = $path_link;
+    $row['title_h1'] = $this->trimRow($mymetatag->getTitleH1());
+    $row['head_title'] = $this->trimRow($mymetatag->getHeadTitle());
+    $row['description'] = $this->trimRow($mymetatag->getDescription());
+    $row['seo_text'] = $this->trimRow($mymetatag->getSeoText());
     return $row + parent::buildRow($mymetatag);
+  }
+
+
+  private function trimRow($str) {
+    $str = strip_tags($str);
+    $str = trim($str);
+    $par['max_length'] = 25; // количество символов
+    $par['word_boundary'] = TRUE; // обрезать только целые слова
+    $par['ellipsis'] = TRUE; // добавить многоточие
+    $par['html'] = TRUE; // строка может содержать html
+    return FieldPluginBase::trimText($par, $str);
   }
 
 }

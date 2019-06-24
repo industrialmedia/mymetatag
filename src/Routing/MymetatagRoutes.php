@@ -57,7 +57,7 @@ class MymetatagRoutes implements ContainerInjectionInterface {
           '/admin/mymetatag/custom-page/' . $path_name,
           [
             '_controller' => 'Drupal\mymetatag\Controller\MymetatagAdminController::addToCustomPage',
-            '_title' => 'Metatags',
+            '_title' => 'Редактирование метатегов',
             'path' => $path,
           ],
           [

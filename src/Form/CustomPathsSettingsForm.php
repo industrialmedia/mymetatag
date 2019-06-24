@@ -70,10 +70,12 @@ class CustomPathsSettingsForm extends ConfigFormBase implements ContainerInjecti
     $paths = $config->get('custom_paths.paths');
     $form['paths'] = [
       '#type' => 'textarea',
-      '#title' => t('Custom paths to metatags'),
+      '#title' => 'Метатеги для кастомных страниц',
       '#rows' => 15,
       '#default_value' => is_array($paths) ? implode("\n", $paths) : '',
-      '#description' => 'Список системных путей, каждый с новой строки',
+      '#description' => 'Добавит таб "Метатеги" для этих одиночных страниц (главная, список новостей, контакты, ...). 
+                         Список системных путей, каждый с новой строки. <br />
+                         Если надо добавить таб для шаблонного пути - добавте нужный роут, по аналогии mymetatag.admin.add_to_node, mymetatag.admin.add_to_term, ...',
     ];
     return parent::buildForm($form, $form_state);
   }

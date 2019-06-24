@@ -1,8 +1,5 @@
 <?php
 
-use Drupal\mybattery\MybatteryHelper;
-
-
 /**
  * Implements hook_theme_registry_alter().
  * @param array $theme_registry
@@ -32,7 +29,6 @@ function mymetatag_theme_registry_alter(&$theme_registry) {
  */
 function mymetatag_preprocess_html(&$variables) {
 
-
   /* @var $mymetatag_storage \Drupal\mymetatag\MymetatagStorageInterface */
   $mymetatag_storage = \Drupal::entityTypeManager()->getStorage('mymetatag');
   /* @var $mymetatag \Drupal\mymetatag\Entity\Mymetatag */
@@ -43,7 +39,6 @@ function mymetatag_preprocess_html(&$variables) {
     if (!empty($mymetatag->getHeadTitle())) {
       $variables['head_title'] = $mymetatag->getHeadTitle();
     }
-
 
     // description
     if (!empty($mymetatag->getDescription())) {
@@ -57,18 +52,38 @@ function mymetatag_preprocess_html(&$variables) {
       $variables['#attached']['html_head'][] = [$description, 'description'];
     }
 
+    // noindex
+    $noindex = $mymetatag->getNoindex();
+    if (!empty($noindex)) {
+      $robots_content = '';
+      if ($noindex == 1) {
+        $robots_content = 'noindex, follow';
+      }
+      elseif ($noindex == 2) {
+        $robots_content = 'noindex, nofollow';
+      }
+      if (!empty($robots_content)) {
+        $robots = [
+          '#tag' => 'meta',
+          '#attributes' => [
+            'name' => 'robots',
+            'content' => $robots_content,
+          ],
+        ];
+        $variables['#attached']['html_head'][] = [$robots, 'robots'];
+      }
+    }
+
   }
-  
+
 
   // Хвост номер страницы
-
   $page_text = '';
   if (!empty($_GET['page'])) {
     $_GET['page'] = (int) $_GET['page'];
     $n = 1 + $_GET['page'];
     $page_text = ' (страница ' . $n . ')';
   }
-
   if (!empty($variables['head_title']) && $page_text) {
     if (is_array($variables['head_title'])) {
       $variables['head_title']['name'] .= $page_text;
@@ -77,7 +92,6 @@ function mymetatag_preprocess_html(&$variables) {
       $variables['head_title'] .= $page_text;
     }
   }
-
   if (!empty($variables['#attached']['html_head'])) {
     foreach ($variables['#attached']['html_head'] as $key => $value) {
       if (!empty($value[1])) {

@@ -71,6 +71,19 @@ class MyrouteMetatagForm extends EntityForm implements ContainerInjectionInterfa
     $form = parent::form($form, $form_state);
     /** @var \Drupal\myroute_metatag\Entity\MyrouteMetatag $myroute_metatag */
     $myroute_metatag = $this->entity;
+
+    $form['help'] = [
+      '#markup' => '
+        <ul>
+          <li><strong>Укажите типы страниц для каких сработает шаблон:</strong><br />
+          <em>роут</em> - один из зарегистрированных на сайте (нода, термин, товар, ...)<br /> 
+          <em>условия</em> - для фильтрации страниц, любые доступные на сайте (словарь таксономии, тип ноды, текущая тема, ...). Если в списке нет - его нужно написать наследуя класс ConditionPluginBase</li>
+          <li><strong>Заполните шаблоны для метатегов h1, тайтл, дескрипшн:</strong><br />
+          можно испльзовать любые допустимые токены, если нужного токена нет - его нужно написать hook_tokens</li>
+        </ul>',
+      '#weight' => -10,
+    ];
+
     $form['label'] = array(
       '#type' => 'textfield',
       '#title' => $this->t('Label'),
@@ -188,6 +201,7 @@ class MyrouteMetatagForm extends EntityForm implements ContainerInjectionInterfa
       ],
     ];
     if ($conditions = $myroute_metatag->getConditions()) {
+
       $form['conditions_section']['conditions'] = [
         '#type' => 'table',
         '#header' => [
@@ -198,6 +212,7 @@ class MyrouteMetatagForm extends EntityForm implements ContainerInjectionInterfa
         '#empty' => $this->t('There are no conditions.'),
       ];
       foreach ($conditions as $condition_id => $condition) {
+        /* @var \Drupal\Core\Condition\ConditionPluginBase $condition */
         $row = [];
         $row['label']['#markup'] = $condition->getPluginDefinition()['label'];
         $row['description']['#markup'] = $condition->summary();

@@ -3,7 +3,7 @@ entity.myroute_metatag.collection:
   path: '/admin/seo/myroute_metatag/list'
   defaults:
     _entity_list: 'myroute_metatag'
-    _title: 'MyrouteMetatag'
+    _title: 'Метатеги по шаблонам'
   requirements:
     _permission: 'administer site configuration'
 
@@ -11,7 +11,7 @@ entity.myroute_metatag.add_form:
   path: '/admin/seo/myroute_metatag/list/add'
   defaults:
     _entity_form: 'myroute_metatag.add'
-    _title: 'Add MyrouteMetatag'
+    _title: 'Добавить шаблон метатегов'
   requirements:
     _permission: 'administer site configuration'
 
@@ -19,7 +19,7 @@ entity.myroute_metatag.edit_form:
   path: '/admin/seo/myroute_metatag/list/{myroute_metatag}'
   defaults:
     _entity_form: 'myroute_metatag.edit'
-    _title: 'Edit MyrouteMetatag'
+    _title: 'Редактировать шаблон метатегов'
   requirements:
     _permission: 'administer site configuration'
 
@@ -27,7 +27,7 @@ entity.myroute_metatag.delete_form:
   path: '/admin/seo/myroute_metatag/list/{myroute_metatag}/delete'
   defaults:
     _entity_form: 'myroute_metatag.delete'
-    _title: 'Delete MyrouteMetatag'
+    _title: 'Удалить шаблон метатегов'
   requirements:
     _permission: 'administer site configuration'
     

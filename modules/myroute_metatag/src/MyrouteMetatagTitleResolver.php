@@ -15,6 +15,8 @@ use Drupal\Core\Utility\Token;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Url;
 
+
+
 class MyrouteMetatagTitleResolver extends TitleResolver {
 
 
@@ -73,16 +75,16 @@ class MyrouteMetatagTitleResolver extends TitleResolver {
    *   The token utility.
    * @param \Drupal\myroute_metatag\MyrouteMetatagHelper $myroute_metatag_helper
    *   The myroute metatag helper service.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity manager service.
    */
   public function __construct(ControllerResolverInterface $controller_resolver, TranslationInterface $string_translation, ArgumentResolverInterface $argument_resolver, MyrouteMetatagEvaluator $myroute_metatag_evaluator, Token $token, MyrouteMetatagHelper $myroute_metatag_helper, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($controller_resolver, $string_translation, $argument_resolver);
     $this->myrouteMetatagEvaluator = $myroute_metatag_evaluator;
     $this->token = $token;
     $this->myrouteMetatagHelper = $myroute_metatag_helper;
-
     $this->entityTypeManager = $entity_type_manager;
     $this->mymetatagStorage = $this->entityTypeManager->getStorage('mymetatag');
-
   }
 
 
