@@ -1,0 +1,40 @@
+myroute_metatag.myroute_metatag.*:
+  type: config_entity
+  label: 'My route metatag entity'
+  mapping:
+    id:
+      type: string
+      label: 'ID'
+    label:
+      type: label
+      label: 'Label'
+    route_name:
+      type: string
+      label: 'Route name'
+    weight:
+      type: integer
+      label: 'Weight'
+    items:
+      type: mapping
+      label: 'Items'
+      mapping:
+        title_h1:
+          type: label
+          label: 'Title h1'
+        head_title:
+          type: text
+          label: 'Head title'
+        description:
+          type: text
+          label: 'Description'
+    conditions:
+      type: sequence
+      label: 'Conditions'
+      sequence:
+        type: condition.plugin.[id]
+        label: 'Condition'
+    logic:
+      type: string
+      label: 'Conditions logic'
+
+

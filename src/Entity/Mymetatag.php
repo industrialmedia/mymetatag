@@ -330,6 +330,7 @@ class Mymetatag extends ContentEntityBase implements MymetatagInterface {
     $fields['title_h1'] = BaseFieldDefinition::create('string')
       ->setLabel('H1')
       ->setSetting('max_length', 255)
+      ->setTranslatable(TRUE)
       ->setDisplayOptions('form', [
         'type' => 'text_textfield',
         'weight' => 1,
@@ -339,34 +340,35 @@ class Mymetatag extends ContentEntityBase implements MymetatagInterface {
     $fields['head_title'] = BaseFieldDefinition::create('string')
       ->setLabel('Тайтл')
       ->setSetting('max_length', 255)
+      ->setTranslatable(TRUE)
       ->setDisplayOptions('form', [
         'type' => 'text_textfield',
         'weight' => 2,
       ])
       ->setDisplayConfigurable('form', TRUE);
 
-
     $fields['description'] = BaseFieldDefinition::create('string_long')
       ->setLabel('Дескрипшн')
+      ->setTranslatable(TRUE)
       ->setDisplayOptions('form', [
         'type' => 'text_textfield',
         'weight' => 3,
       ])
       ->setDisplayConfigurable('form', TRUE);
 
-
     $fields['seo_text_title'] = BaseFieldDefinition::create('string')
       ->setLabel('СЕО-текст (заголовок)')
       ->setSetting('max_length', 255)
+      ->setTranslatable(TRUE)
       ->setDisplayOptions('form', [
         'type' => 'text_textfield',
         'weight' => 4,
       ])
       ->setDisplayConfigurable('form', TRUE);
 
-
     $fields['seo_text'] = BaseFieldDefinition::create('text_long')
       ->setLabel('СЕО-текст')
+      ->setTranslatable(TRUE)
       ->setDisplayOptions('form', [
         'type' => 'text_textfield',
         'weight' => 5,
@@ -382,6 +384,7 @@ class Mymetatag extends ContentEntityBase implements MymetatagInterface {
         1 => 'Noindex, follow',
         2 => 'Noindex, nofollow',
       ])
+      ->setTranslatable(TRUE)
       ->setDisplayOptions('form', [
         'type' => 'options_select',
         'weight' => 6,
@@ -392,16 +395,19 @@ class Mymetatag extends ContentEntityBase implements MymetatagInterface {
     $fields['uid'] = BaseFieldDefinition::create('entity_reference')
       ->setLabel(t('User Name'))
       ->setSetting('target_type', 'user')
-      ->setSetting('handler', 'default');
+      ->setSetting('handler', 'default')
+      ->setTranslatable(TRUE);
 
     $fields['langcode'] = BaseFieldDefinition::create('language')
       ->setLabel(t('Language code'));
 
     $fields['created'] = BaseFieldDefinition::create('created')
-      ->setLabel(t('Created'));
+      ->setLabel(t('Created'))
+      ->setTranslatable(TRUE);
 
     $fields['changed'] = BaseFieldDefinition::create('changed')
-      ->setLabel(t('Changed'));
+      ->setLabel(t('Changed'))
+      ->setTranslatable(TRUE);
 
 
     return $fields;

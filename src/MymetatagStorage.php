@@ -15,6 +15,11 @@ use Drupal\Core\Entity\EntityFieldManagerInterface;
 use Drupal\Core\Cache\MemoryCache\MemoryCacheInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\EntityRepositoryInterface;
+
+
+
+
 
 class MymetatagStorage extends SqlContentEntityStorage implements MymetatagStorageInterface {
 
@@ -43,6 +48,15 @@ class MymetatagStorage extends SqlContentEntityStorage implements MymetatagStora
 
 
   /**
+   * The entity repository.
+   *
+   * @var \Drupal\Core\Entity\EntityRepositoryInterface
+   */
+  protected $entityRepository;
+
+
+
+  /**
    * Constructs a new CommerceContentEntityStorage object.
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
@@ -67,12 +81,15 @@ class MymetatagStorage extends SqlContentEntityStorage implements MymetatagStora
    *   The config factory.
    * @param \Drupal\Core\Routing\RouteProviderInterface $route_provider
    *   The route provider.
+   *  @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
+   *   The entity repository.
    */
-  public function __construct(EntityTypeInterface $entity_type, Connection $database, EntityFieldManagerInterface $entity_field_manager, CacheBackendInterface $cache, LanguageManagerInterface $language_manager, MemoryCacheInterface $memory_cache = NULL, EntityTypeBundleInfoInterface $entity_type_bundle_info = NULL, EntityTypeManagerInterface $entity_type_manager = NULL, CurrentPathStack $current_path, ConfigFactoryInterface $config_factory, RouteProviderInterface $route_provider) {
+  public function __construct(EntityTypeInterface $entity_type, Connection $database, EntityFieldManagerInterface $entity_field_manager, CacheBackendInterface $cache, LanguageManagerInterface $language_manager, MemoryCacheInterface $memory_cache = NULL, EntityTypeBundleInfoInterface $entity_type_bundle_info = NULL, EntityTypeManagerInterface $entity_type_manager = NULL, CurrentPathStack $current_path, ConfigFactoryInterface $config_factory, RouteProviderInterface $route_provider, EntityRepositoryInterface $entity_repository) {
     parent::__construct($entity_type, $database, $entity_field_manager, $cache, $language_manager, $memory_cache, $entity_type_bundle_info, $entity_type_manager);
     $this->currentPath = $current_path;
     $this->configFactory = $config_factory;
     $this->routeProvider = $route_provider;
+    $this->entityRepository = $entity_repository;
   }
 
   /**
@@ -89,6 +106,8 @@ class MymetatagStorage extends SqlContentEntityStorage implements MymetatagStora
     $current_path = $container->get('path.current');
     $config_factory = $container->get('config.factory');
     $route_provider = $container->get('router.route_provider');
+    $entity_repository = $container->get('entity.repository');
+
     return new static(
       $entity_type,
       $database,
@@ -100,7 +119,8 @@ class MymetatagStorage extends SqlContentEntityStorage implements MymetatagStora
       $entity_type_manager,
       $current_path,
       $config_factory,
-      $route_provider
+      $route_provider,
+      $entity_repository
     );
   }
 
@@ -112,14 +132,14 @@ class MymetatagStorage extends SqlContentEntityStorage implements MymetatagStora
     if (empty($source_path)) {
       $source_path = $this->currentPath->getPath();
     }
-    if (empty($langcode)) {
-      $langcode = $this->languageManager->getCurrentLanguage()->getId();
-    }
     $mymetatags = $this->loadByProperties([
       'source_path' => $source_path,
-      'langcode' => $langcode
     ]);
     if ($mymetatag = reset($mymetatags)) {
+      if (empty($langcode)) {
+        $langcode = $this->languageManager->getCurrentLanguage()->getId();
+      }
+      $mymetatag = $this->entityRepository->getTranslationFromContext($mymetatag, $langcode);
       return $mymetatag;
     }
     return NULL;
