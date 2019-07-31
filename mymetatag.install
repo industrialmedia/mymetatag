@@ -1,0 +1,16 @@
+<?php
+
+/**
+ * @file
+ * Mymetatag install file.
+ */
+
+
+
+/**
+ * Implements hook_install().
+ */
+function mymetatag_install() {
+  module_set_weight('mymetatag', 30);
+}
+

@@ -1,0 +1,16 @@
+<?php
+
+/**
+ * @file
+ * Myroute metatag install file.
+ */
+
+
+
+/**
+ * Implements hook_install().
+ */
+function myroute_metatag_install() {
+  module_set_weight('myroute_metatag', 20);
+}
+

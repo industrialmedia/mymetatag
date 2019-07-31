@@ -1,26 +1,5 @@
 <?php
 
-/**
- * Implements hook_theme_registry_alter().
- * @param array $theme_registry
- */
-function mymetatag_theme_registry_alter(&$theme_registry) {
-
-  foreach ($theme_registry['block']['preprocess functions'] as $key => $name) {
-    if ($name == 'mymetatag_preprocess_block') {
-      unset($theme_registry['block']['preprocess functions'][$key]);
-      $theme_registry['block']['preprocess functions'][] = 'mymetatag_preprocess_block';
-    }
-  }
-
-  foreach ($theme_registry['html']['preprocess functions'] as $key => $name) {
-    if ($name == 'mymetatag_preprocess_html') {
-      unset($theme_registry['html']['preprocess functions'][$key]);
-      $theme_registry['html']['preprocess functions'][] = 'mymetatag_preprocess_html';
-    }
-  }
-
-}
 
 
 /**
