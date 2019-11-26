@@ -1,0 +1,8 @@
+admin:
+  version: VERSION
+  css:
+    theme:
+      css/myroute_metatag.admin.css: {}
+
+
+

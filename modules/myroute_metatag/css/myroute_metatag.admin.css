@@ -1,0 +1,14 @@
+.myroute-metatag-list-builder table table {
+  margin: 0;
+  width: auto;
+}
+.myroute-metatag-list-builder table table tr {
+  border: none;
+}
+.myroute-metatag-list-builder table table td {
+  font-size: 10px;
+  width: 240px;
+  padding: 5px;
+}
+
+

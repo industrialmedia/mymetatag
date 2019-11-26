@@ -24,6 +24,7 @@ class MyrouteMetatagListBuilder extends DraggableListBuilder {
    */
   public function buildHeader() {
     $header['label'] = 'Шаблоны';
+    $header['conditions'] = t('Conditions');
     $header['weight'] = t('Weight');
     $header += parent::buildHeader();
     return $header;
@@ -33,7 +34,29 @@ class MyrouteMetatagListBuilder extends DraggableListBuilder {
    * {@inheritdoc}
    */
   public function buildRow(EntityInterface $entity) {
+    /* @var \Drupal\myroute_metatag\Entity\MyrouteMetatag $entity */
     $row['label'] = $entity->label();
+    // conditions
+    $row['conditions'] = [];
+    if ($conditions = $entity->getConditions()) {
+      $row['conditions'] = [
+        '#type' => 'table',
+        '#header' => [],
+        '#empty' => '',
+        '#attached' => [
+          'library' => ['myroute_metatag/admin'],
+        ]
+      ];
+      foreach ($conditions as $condition_id => $condition) {
+        /* @var \Drupal\Core\Condition\ConditionPluginBase $condition */
+        $row2 = [];
+        $row2['label']['#markup'] = $condition->getPluginDefinition()['label'];
+        $row2['description']['#markup'] = $condition->summary();
+        $row['conditions'][$condition_id] = $row2;
+      }
+    }
+
+
     $row += parent::buildRow($entity);
     return $row;
   }
