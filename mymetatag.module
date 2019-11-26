@@ -1,5 +1,6 @@
 <?php
 
+use Drupal\Component\Utility\Html;
 
 
 /**
@@ -16,16 +17,19 @@ function mymetatag_preprocess_html(&$variables) {
 
     // head_title
     if (!empty($mymetatag->getHeadTitle())) {
-      $variables['head_title'] = $mymetatag->getHeadTitle();
+      $variables['head_title'] = Html::decodeEntities($mymetatag->getHeadTitle());
     }
 
     // description
     if (!empty($mymetatag->getDescription())) {
+      $description_text = $mymetatag->getDescription();
+      $description_text = Html::decodeEntities($description_text);
+      $description_text = str_replace('"', "'", $description_text);
       $description = [
         '#tag' => 'meta',
         '#attributes' => [
           'name' => 'description',
-          'content' => $mymetatag->getDescription(),
+          'content' => $description_text,
         ],
       ];
       $variables['#attached']['html_head'][] = [$description, 'description'];

@@ -1,5 +1,6 @@
 <?php
 
+use Drupal\Component\Utility\Html;
 use Drupal\myroute_metatag\Entity\MyrouteMetatag;
 
 
@@ -27,16 +28,18 @@ function myroute_metatag_preprocess_html(&$variables) {
       if (!empty($items['head_title'])) {
         $items['head_title'] = \Drupal::service('token')
           ->replace($items['head_title'], $data, array('clear' => TRUE));
-        $variables['head_title'] = $items['head_title'];
+        $variables['head_title'] = Html::decodeEntities($items['head_title']);
       }
       if (!empty($items['description'])) {
-        $items['description'] = \Drupal::service('token')
+        $description_text = \Drupal::service('token')
           ->replace($items['description'], $data, array('clear' => TRUE));
+        $description_text = Html::decodeEntities($description_text);
+        $description_text = str_replace('"', "'", $description_text);
         $description = [
           '#tag' => 'meta',
           '#attributes' => [
             'name' => 'description',
-            'content' => $items['description'],
+            'content' => $description_text,
           ],
         ];
         $variables['#attached']['html_head'][] = [$description, 'description'];
