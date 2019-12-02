@@ -28,7 +28,9 @@ function myroute_metatag_preprocess_html(&$variables) {
       if (!empty($items['head_title'])) {
         $items['head_title'] = \Drupal::service('token')
           ->replace($items['head_title'], $data, array('clear' => TRUE));
-        $variables['head_title'] = Html::decodeEntities($items['head_title']);
+
+        $variables['head_title'] = [];
+        $variables['head_title']['title'] = Html::decodeEntities($items['head_title']);
       }
       if (!empty($items['description'])) {
         $description_text = \Drupal::service('token')

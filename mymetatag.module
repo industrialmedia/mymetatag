@@ -17,7 +17,8 @@ function mymetatag_preprocess_html(&$variables) {
 
     // head_title
     if (!empty($mymetatag->getHeadTitle())) {
-      $variables['head_title'] = Html::decodeEntities($mymetatag->getHeadTitle());
+      $variables['head_title'] = [];
+      $variables['head_title']['title'] = Html::decodeEntities($mymetatag->getHeadTitle());
     }
 
     // description
@@ -69,7 +70,7 @@ function mymetatag_preprocess_html(&$variables) {
   }
   if (!empty($variables['head_title']) && $page_text) {
     if (is_array($variables['head_title'])) {
-      $variables['head_title']['name'] .= $page_text;
+      $variables['head_title']['title'] .= $page_text;
     }
     else {
       $variables['head_title'] .= $page_text;
