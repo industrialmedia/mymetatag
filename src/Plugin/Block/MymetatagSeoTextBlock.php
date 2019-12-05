@@ -57,7 +57,7 @@ class MymetatagSeoTextBlock extends BlockBase implements ContainerFactoryPluginI
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     /* @var \Drupal\Core\Render\RendererInterface $renderer */
     $renderer = $container->get('renderer');
-    
+
     return new static(
       $configuration,
       $plugin_id,
@@ -109,9 +109,10 @@ class MymetatagSeoTextBlock extends BlockBase implements ContainerFactoryPluginI
     $config = $this->getConfiguration();
     $build = [];
     $build['#cache']['contexts'] = ['route'];
-
+    
     $mymetatag = $this->mymetatagStorage->getMymetatagBySourcePath();
     if (empty($mymetatag)) {
+      $build['#cache']['tags'] = ['mymetatag_list'];
       return $build;
     }
 
