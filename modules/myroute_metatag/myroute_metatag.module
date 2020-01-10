@@ -14,7 +14,6 @@ function myroute_metatag_preprocess_html(&$variables) {
   if ($route_name && $myroute_metatag_id = \Drupal::service('myroute_metatag.myroute_metatag_evaluator')
       ->evaluateByRouteName($route_name)
   ) {
-    /** @var \Drupal\myroute_metatag\Entity\MyrouteMetatag $myroute_metatag */
     $myroute_metatag = MyrouteMetatag::load($myroute_metatag_id);
     $items = $myroute_metatag->getItems();
     if (!empty($items['head_title']) || !empty($items['description'])) {
@@ -28,7 +27,6 @@ function myroute_metatag_preprocess_html(&$variables) {
       if (!empty($items['head_title'])) {
         $items['head_title'] = \Drupal::service('token')
           ->replace($items['head_title'], $data, array('clear' => TRUE));
-
         $variables['head_title'] = [];
         $variables['head_title']['title'] = Html::decodeEntities($items['head_title']);
       }
@@ -51,6 +49,36 @@ function myroute_metatag_preprocess_html(&$variables) {
 }
 
 
-
+/**
+ * Implements hook_preprocess_block().
+ * @param array $variables
+ */
+function myroute_metatag_preprocess_block(&$variables) {
+  /* TitleResolver не всегда вызывается для блока заголовка, поэтому нужно дублировать здесь */
+  if ('page_title_block' == $variables['plugin_id']) {
+    $route_match = \Drupal::routeMatch();
+    $route_name = $route_match->getRouteName();
+    if ($route_name && $myroute_metatag_id = \Drupal::service('myroute_metatag.myroute_metatag_evaluator')
+        ->evaluateByRouteName($route_name)
+    ) {
+      $myroute_metatag = MyrouteMetatag::load($myroute_metatag_id);
+      $items = $myroute_metatag->getItems();
+      if (!empty($items['title_h1'])) {
+        $token_types = \Drupal::service('myroute_metatag.helper')
+          ->getTokenTypesByRouteName($route_name);
+        $data = [];
+        foreach ($token_types as $token_type => $parameter_name) {
+          $parameter = $route_match->getParameter($parameter_name);
+          $data[$token_type] = $parameter;
+        }
+        $new_title = \Drupal::service('token')
+          ->replace($items['title_h1'], $data, array('clear' => TRUE));
+        if (!empty($new_title)) {
+          $variables['content']['#title'] = $new_title;
+        }
+      }
+    }
+  }
+}
 
 

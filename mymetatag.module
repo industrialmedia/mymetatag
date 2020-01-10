@@ -99,11 +99,10 @@ function mymetatag_preprocess_html(&$variables) {
  * @param array $variables
  */
 function mymetatag_preprocess_block(&$variables) {
-  /* Сделано в MyrouteMetatagTitleResolver - для изменения заголовка не только в блоке
+  /* TitleResolver не всегда вызывается для блока заголовка, поэтому нужно дублировать здесь */
   if ('page_title_block' == $variables['plugin_id']) {
-    /**  @var $mymetatag_storage \Drupal\mymetatag\MymetatagStorageInterface
+    /**  @var  \Drupal\mymetatag\MymetatagStorageInterface $mymetatag_storage */
     $mymetatag_storage = \Drupal::entityTypeManager()->getStorage('mymetatag');
-    /* @var $mymetatag \Drupal\mymetatag\Entity\Mymetatag
     $mymetatag = $mymetatag_storage->getMymetatagBySourcePath();
     if ($mymetatag) {
       if (!empty($mymetatag->getTitleH1())) {
@@ -111,7 +110,7 @@ function mymetatag_preprocess_block(&$variables) {
       }
     }
   }
-  */
+
 }
 
 
