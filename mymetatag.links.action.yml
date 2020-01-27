@@ -1,5 +1,6 @@
-mymetatag.mymetatag_add:
-  route_name: mymetatag.mymetatag_add
-  title: 'Добавить метатеги'
-  appears_on:
-    - entity.mymetatag.collection
+# Добавлять только через табы на конкретной странице
+#mymetatag.mymetatag_add:
+#  route_name: mymetatag.mymetatag_add
+#  title: 'Добавить метатеги'
+#  appears_on:
+#    - entity.mymetatag.collection

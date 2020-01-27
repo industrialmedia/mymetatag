@@ -62,13 +62,14 @@ entity.mymetatag.collection:
     _permission: 'administer mymetatag entity'
 
 
-mymetatag.mymetatag_add:
-  path: '/admin/seo/mymetatag/add'
-  defaults:
-    _entity_form: mymetatag.add
-    _title: 'Добавить метатеги'
-  requirements:
-    _entity_create_access: 'mymetatag'
+# Добавлять только через табы на конкретной странице
+#mymetatag.mymetatag_add:
+#  path: '/admin/seo/mymetatag/add'
+#  defaults:
+#    _entity_form: mymetatag.add
+#    _title: 'Добавить метатеги'
+#  requirements:
+#    _entity_create_access: 'mymetatag'
 
 
 

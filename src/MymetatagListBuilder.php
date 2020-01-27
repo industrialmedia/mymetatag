@@ -14,7 +14,7 @@ use Drupal\views\Plugin\views\field\FieldPluginBase;
  */
 class MymetatagListBuilder extends EntityListBuilder {
 
-  
+
   /**
    * {@inheritdoc}
    */
@@ -22,9 +22,11 @@ class MymetatagListBuilder extends EntityListBuilder {
     $link = Link::createFromRoute('метатеги по шаблонам', 'entity.myroute_metatag.collection');
     $link = $link->toString();
     $build['description'] = [
-      '#markup' => '<p>Метатеги для конкретной страницы имеют больший приоритет чем ' . $link . ', 
-                    поэтому они будут использованы даже если есть шаблон для этих страниц.<br />
-                    Для страницы можно указать: <strong>h1, тайтл, дескрипшен, сео-текст, noindex</strong></p>',
+      '#markup' => '<p>
+        Добавить мета теги для конкретной страницы можно только на странице для которой они нужны, через таб - Метатеги.<br /> 
+        Метатеги для конкретной страницы имеют больший приоритет чем ' . $link . ', 
+        поэтому они будут использованы даже если есть шаблон для этих страниц.<br />
+        Для страницы можно указать: <strong>h1, тайтл, дескрипшен, сео-текст, noindex</strong></p>',
     ];
     $build += parent::render();
     return $build;
