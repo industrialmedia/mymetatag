@@ -130,3 +130,18 @@ function mymetatag_page_attachments_alter(array &$page) {
     }
   }
 }
+
+
+
+/**
+ * Implements hook_block_view_BASE_BLOCK_ID_alter().
+ */
+function mymetatag_block_view_mymetatag_seo_text_alter(array &$build, \Drupal\Core\Block\BlockPluginInterface $block) {
+  if ($block instanceof \Drupal\mymetatag\Plugin\Block\MymetatagSeoTextBlock) {
+    if ($mymetatag = $block->getMymetatag()) {
+      $build['#contextual_links']['mymetatag'] = [
+        'route_parameters' => ['mymetatag' => $mymetatag->id()],
+      ];
+    }
+  }
+}

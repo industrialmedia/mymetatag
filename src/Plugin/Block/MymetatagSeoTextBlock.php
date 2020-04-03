@@ -31,6 +31,12 @@ class MymetatagSeoTextBlock extends BlockBase implements ContainerFactoryPluginI
    */
   protected $renderer;
 
+
+  /**
+   * @var \Drupal\mymetatag\MymetatagInterface
+   */
+  protected $mymetatag;
+
   /**
    * Constructs a new CartBlock.
    *
@@ -49,15 +55,15 @@ class MymetatagSeoTextBlock extends BlockBase implements ContainerFactoryPluginI
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->mymetatagStorage = $mymetatag_storage;
     $this->renderer = $renderer;
+    $this->mymetatag = $this->mymetatagStorage->getMymetatagBySourcePath();
   }
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    /* @var \Drupal\Core\Render\RendererInterface $renderer */
+    /** @var \Drupal\Core\Render\RendererInterface $renderer */
     $renderer = $container->get('renderer');
-
     return new static(
       $configuration,
       $plugin_id,
@@ -72,10 +78,9 @@ class MymetatagSeoTextBlock extends BlockBase implements ContainerFactoryPluginI
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    $config = [
+    return [
       'is_show_title' => TRUE,
     ];
-    return $config;
   }
 
 
@@ -109,8 +114,8 @@ class MymetatagSeoTextBlock extends BlockBase implements ContainerFactoryPluginI
     $config = $this->getConfiguration();
     $build = [];
     $build['#cache']['contexts'] = ['route'];
-    
-    $mymetatag = $this->mymetatagStorage->getMymetatagBySourcePath();
+
+    $mymetatag = $this->mymetatag;
     if (empty($mymetatag)) {
       $build['#cache']['tags'] = ['mymetatag_list'];
       return $build;
@@ -146,6 +151,14 @@ class MymetatagSeoTextBlock extends BlockBase implements ContainerFactoryPluginI
       '#markup' => '<div class="seo-text"><div class="seo-text-in">' . $seo_text . '</div></div>',
     ];
     return $build;
+  }
+
+
+  /**
+   * @return \Drupal\Core\Entity\EntityInterface|\Drupal\mymetatag\MymetatagInterface|mixed|null
+   */
+  public function getMymetatag() {
+    return $this->mymetatag;
   }
 
 

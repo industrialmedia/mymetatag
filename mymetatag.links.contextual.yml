@@ -1,0 +1,4 @@
+mymetatag.seo_text_block_update:
+  title: 'Edit'
+  route_name: entity.mymetatag.edit_form
+  group: mymetatag
