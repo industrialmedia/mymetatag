@@ -1,7 +1,7 @@
 mymetatag.admin.custom_paths_settings:
-  path: '/admin/seo/mymetatag/custom-paths-settings'
+  path: '/admin/seo/mymetatag/settings'
   defaults:
-    _form: '\Drupal\mymetatag\Form\CustomPathsSettingsForm'
+    _form: '\Drupal\mymetatag\Form\MymetatagSettingsForm'
     _title: 'Настройки метатегов'
   requirements:
     _permission: 'administer mymetatag entity'

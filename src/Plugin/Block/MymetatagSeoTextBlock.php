@@ -80,6 +80,7 @@ class MymetatagSeoTextBlock extends BlockBase implements ContainerFactoryPluginI
   public function defaultConfiguration() {
     return [
       'is_show_title' => TRUE,
+      'title_html_tag' => 'h2',
     ];
   }
 
@@ -95,6 +96,17 @@ class MymetatagSeoTextBlock extends BlockBase implements ContainerFactoryPluginI
       '#title' => 'Показывать "СЕО текст" заголовок',
       '#default_value' => $config['is_show_title'],
     ];
+    $form['title_html_tag'] = [
+      '#title' => $this->t('Html title tag'),
+      '#type' => 'select',
+      '#options' => ['h2' => 'h2', 'h3' => 'h3', 'div' => 'div', 'span' => 'span'],
+      '#default_value' => $config['title_html_tag'],
+      '#states' => [
+        'visible' => [
+          ':input[name="settings[is_show_title]"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
     return $form;
   }
 
@@ -104,6 +116,7 @@ class MymetatagSeoTextBlock extends BlockBase implements ContainerFactoryPluginI
    */
   public function blockSubmit($form, FormStateInterface $form_state) {
     $this->configuration['is_show_title'] = $form_state->getValue('is_show_title');
+    $this->configuration['title_html_tag'] = $form_state->getValue('title_html_tag');
   }
 
 
@@ -140,10 +153,14 @@ class MymetatagSeoTextBlock extends BlockBase implements ContainerFactoryPluginI
     $build['#attributes']['class'][] = 'block-seo-text';
     $seo_text_title = trim($mymetatag->getSeoTextTitle());
     if ($config['is_show_title'] && $seo_text_title) {
+      $tag = !empty($config['title_html_tag']) ? $config['title_html_tag'] : 'h2';
       $build['#attributes']['class'][] = 'block-seo-text-has-title';
       $build['seo_text_title'] = [
         '#type' => 'markup',
-        '#markup' => '<div class="seo-text-title"><div class="seo-text-title-in">' . $seo_text_title . '</div></div>',
+        '#markup' => '
+          <div class="seo-text-title">
+            <' . $tag . ' class="seo-text-title-in">' . $seo_text_title . '</' . $tag . '>
+          </div>',
       ];
     }
     $build['seo_text'] = [
