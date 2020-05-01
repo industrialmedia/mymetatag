@@ -211,7 +211,7 @@ interface MymetatagInterface extends ContentEntityInterface, EntityOwnerInterfac
    */
   public function setSeoText($seo_text);
 
-  
+
 
   /**
    * Gets the noindex.
@@ -234,8 +234,16 @@ interface MymetatagInterface extends ContentEntityInterface, EntityOwnerInterfac
   public function setNoindex($noindex);
 
 
+  /**
+   * Gets the noindex text.
+   *
+   * @return string
+   *   noindex text of the mymetatag.
+   */
+  public function getNoindexText();
 
-  
+
+
 }
 
 

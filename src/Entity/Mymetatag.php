@@ -222,14 +222,34 @@ class Mymetatag extends ContentEntityBase implements MymetatagInterface {
   /**
    * {@inheritdoc}
    */
-  public function getSeoTextTitle() {
+  public function getNoindexText() {
+    $value = $this->getNoindex();
+    $value_text = '';
+    switch ($value) {
+      case 1:
+        $value_text = 'Noindex, follow';
+        break;
+      case 2:
+        $value_text = 'Noindex, nofollow';
+        break;
+    }
+    return $value_text;
+  }
+
+
+  /**
+   * {@inheritdoc}
+   */
+  public
+  function getSeoTextTitle() {
     return $this->get('seo_text_title')->value;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setSeoTextTitle($seo_text_title) {
+  public
+  function setSeoTextTitle($seo_text_title) {
     $this->set('seo_text_title', $seo_text_title);
     return $this;
   }
@@ -238,14 +258,16 @@ class Mymetatag extends ContentEntityBase implements MymetatagInterface {
   /**
    * {@inheritdoc}
    */
-  public function getSeoText() {
+  public
+  function getSeoText() {
     return $this->get('seo_text')->value;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setSeoText($seo_text) {
+  public
+  function setSeoText($seo_text) {
     $this->set('seo_text', $seo_text);
     return $this;
   }
@@ -254,7 +276,8 @@ class Mymetatag extends ContentEntityBase implements MymetatagInterface {
   /**
    * {@inheritdoc}
    */
-  public function getChangedTimeAcrossTranslations() {
+  public
+  function getChangedTimeAcrossTranslations() {
     $changed = $this->getUntranslated()->getChangedTime();
 
     /* @var \Drupal\Core\Language\Language $language */
@@ -269,21 +292,24 @@ class Mymetatag extends ContentEntityBase implements MymetatagInterface {
   /**
    * {@inheritdoc}
    */
-  public function getOwner() {
+  public
+  function getOwner() {
     return $this->get('uid')->entity;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getOwnerId() {
+  public
+  function getOwnerId() {
     return $this->get('uid')->target_id;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setOwnerId($uid) {
+  public
+  function setOwnerId($uid) {
     $this->set('uid', $uid);
     return $this;
   }
@@ -291,7 +317,8 @@ class Mymetatag extends ContentEntityBase implements MymetatagInterface {
   /**
    * {@inheritdoc}
    */
-  public function setOwner(UserInterface $account) {
+  public
+  function setOwner(UserInterface $account) {
     $this->set('uid', $account->id());
     return $this;
   }
@@ -299,7 +326,8 @@ class Mymetatag extends ContentEntityBase implements MymetatagInterface {
   /**
    * {@inheritdoc}
    */
-  public static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
+  public
+  static function baseFieldDefinitions(EntityTypeInterface $entity_type) {
     /** @var \Drupal\Core\Field\BaseFieldDefinition[] $fields */
     $fields = parent::baseFieldDefinitions($entity_type);
 

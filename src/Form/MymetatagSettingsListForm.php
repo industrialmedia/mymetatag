@@ -1,21 +1,21 @@
 <?php
 
-namespace Drupal\myroute_metatag\Form;
+namespace Drupal\mymetatag\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 
-/**
- * Myroute metatag settings list form.
- */
-class MyrouteMetatagSettingsListForm extends ConfigFormBase {
 
+/**
+ * Mymetatag settings list form.
+ */
+class MymetatagSettingsListForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
    */
   public function getFormId() {
-    return 'myroute_metatag_settings_list_form';
+    return 'mymetatag_settings_list_form';
   }
 
 
@@ -23,7 +23,7 @@ class MyrouteMetatagSettingsListForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   protected function getEditableConfigNames() {
-    return ['myroute_metatag.settings'];
+    return ['mymetatag.settings'];
   }
 
 
@@ -31,17 +31,20 @@ class MyrouteMetatagSettingsListForm extends ConfigFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
-    $config = $this->config('myroute_metatag.settings');
+    $config = $this->config('mymetatag.settings');
     $form['view_cols'] = [
       '#type' => 'checkboxes',
       '#title' => 'Показать колонки',
       '#default_value' => !empty($config->get('list.view_cols')) ? $config->get('list.view_cols') : [],
       '#options' => [
-        'route_name' => $this->t('Route Name'),
-        'conditions' => 'Условия',
+        'id' => 'ID',
+        'path' => 'Path',
         'title_h1' => 'H1',
         'head_title' => 'Head title',
         'description' => 'Description',
+        'noindex' => 'Noindex',
+        'seo_text_title' => 'Seo text title',
+        'seo_text' => 'Seo text',
       ],
     ];
     return parent::buildForm($form, $form_state);
@@ -56,7 +59,7 @@ class MyrouteMetatagSettingsListForm extends ConfigFormBase {
     if ($view_cols) {
       $view_cols = array_values($view_cols);
     }
-    $config =  $this->config('myroute_metatag.settings');
+    $config =  $this->config('mymetatag.settings');
     $config->set('list.view_cols', $view_cols);
     $config->save();
     parent::submitForm($form, $form_state);
