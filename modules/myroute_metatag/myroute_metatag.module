@@ -25,16 +25,18 @@ function myroute_metatag_preprocess_html(&$variables) {
         $data[$token_type] = $parameter;
       }
       if (!empty($items['head_title'])) {
-        $items['head_title'] = \Drupal::service('token')
-          ->replace($items['head_title'], $data, array('clear' => TRUE));
+        $head_title_text = \Drupal::service('token')->replace($items['head_title'], $data, array('clear' => TRUE));
+        $head_title_text = preg_replace('/\s{2,}/', ' ', $head_title_text);
+        $head_title_text = trim($head_title_text);
         $variables['head_title'] = [];
-        $variables['head_title']['title'] = Html::decodeEntities($items['head_title']);
+        $variables['head_title']['title'] = Html::decodeEntities($head_title_text);
       }
       if (!empty($items['description'])) {
-        $description_text = \Drupal::service('token')
-          ->replace($items['description'], $data, array('clear' => TRUE));
+        $description_text = \Drupal::service('token')->replace($items['description'], $data, array('clear' => TRUE));
         $description_text = Html::decodeEntities($description_text);
         $description_text = str_replace('"', "'", $description_text);
+        $description_text = preg_replace('/\s{2,}/', ' ', $description_text);
+        $description_text = trim($description_text);
         $description = [
           '#tag' => 'meta',
           '#attributes' => [
@@ -73,6 +75,8 @@ function myroute_metatag_preprocess_block(&$variables) {
         }
         $new_title = \Drupal::service('token')
           ->replace($items['title_h1'], $data, array('clear' => TRUE));
+        $new_title = preg_replace('/\s{2,}/', ' ', $new_title);
+        $new_title = trim($new_title);
         if (!empty($new_title)) {
           $variables['content']['#title'] = $new_title;
         }

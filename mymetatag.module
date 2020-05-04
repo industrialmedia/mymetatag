@@ -17,8 +17,10 @@ function mymetatag_preprocess_html(&$variables) {
 
     // head_title
     if (!empty($mymetatag->getHeadTitle())) {
+      $head_title_text = preg_replace('/\s{2,}/', ' ', $mymetatag->getHeadTitle());
+      $head_title_text = trim($head_title_text);
       $variables['head_title'] = [];
-      $variables['head_title']['title'] = Html::decodeEntities($mymetatag->getHeadTitle());
+      $variables['head_title']['title'] = Html::decodeEntities($head_title_text);
     }
 
     // description
@@ -26,6 +28,8 @@ function mymetatag_preprocess_html(&$variables) {
       $description_text = $mymetatag->getDescription();
       $description_text = Html::decodeEntities($description_text);
       $description_text = str_replace('"', "'", $description_text);
+      $description_text = preg_replace('/\s{2,}/', ' ', $description_text);
+      $description_text = trim($description_text);
       $description = [
         '#tag' => 'meta',
         '#attributes' => [
@@ -106,7 +110,9 @@ function mymetatag_preprocess_block(&$variables) {
     $mymetatag = $mymetatag_storage->getMymetatagBySourcePath();
     if ($mymetatag) {
       if (!empty($mymetatag->getTitleH1())) {
-        $variables['content']['#title'] = $mymetatag->getTitleH1();
+        $title_h1_text = preg_replace('/\s{2,}/', ' ', $mymetatag->getTitleH1());
+        $title_h1_text = trim($title_h1_text);
+        $variables['content']['#title'] = $title_h1_text;
       }
     }
   }

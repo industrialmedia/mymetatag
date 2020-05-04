@@ -91,6 +91,7 @@ class MymetatagListBuilder extends EntityListBuilder {
    * {@inheritdoc}
    */
   public function buildHeader() {
+    $header = [];
     if (in_array('id', $this->viewCols)) {
       $header['id'] = $this->t('ID');
     }
@@ -123,6 +124,7 @@ class MymetatagListBuilder extends EntityListBuilder {
    */
   public function buildRow(EntityInterface $mymetatag) {
     /* @var $mymetatag \Drupal\mymetatag\Entity\Mymetatag */
+    $row = [];
     // id
     if (in_array('id', $this->viewCols)) {
       $row['id'] = $mymetatag->id();
