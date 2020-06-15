@@ -138,15 +138,15 @@ class MymetatagListBuilder extends EntityListBuilder {
     }
     // title_h1
     if (in_array('title_h1', $this->viewCols)) {
-      $row['title_h1']['#markup'] = $mymetatag->getTitleH1();
+      $row['title_h1'] = $mymetatag->getTitleH1();
     }
     // head_title
     if (in_array('head_title', $this->viewCols)) {
-      $row['head_title']['#markup'] = $mymetatag->getHeadTitle();
+      $row['head_title'] = $mymetatag->getHeadTitle();
     }
     // description
     if (in_array('description', $this->viewCols)) {
-      $row['description']['#markup'] = $mymetatag->getDescription();
+      $row['description'] = $mymetatag->getDescription();
     }
     // noindex
     if (in_array('noindex', $this->viewCols)) {
