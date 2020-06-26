@@ -37,7 +37,7 @@ class MymetatagRoutes implements ContainerInjectionInterface {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('entity.manager')->getStorage('mymetatag')
+      $container->get('entity_type.manager')->getStorage('mymetatag')
     );
   }
 

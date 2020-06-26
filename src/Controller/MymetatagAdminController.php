@@ -48,7 +48,7 @@ class MymetatagAdminController extends ControllerBase {
     $database = $container->get('database');
     return new static(
       $database,
-      $container->get('entity.manager')->getStorage('mymetatag')
+      $container->get('entity_type.manager')->getStorage('mymetatag')
     );
   }
 
@@ -99,6 +99,6 @@ class MymetatagAdminController extends ControllerBase {
     $mymetatag_form = $this->entityFormBuilder()->getForm($mymetatag, 'edit');
     return $mymetatag_form;
   }
-  
-  
+
+
 }

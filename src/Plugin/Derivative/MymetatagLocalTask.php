@@ -38,7 +38,7 @@ class MymetatagLocalTask extends DeriverBase implements ContainerDeriverInterfac
    */
   public static function create(ContainerInterface $container, $base_plugin_id) {
     return new static(
-      $container->get('entity.manager')->getStorage('mymetatag')
+      $container->get('entity_type.manager')->getStorage('mymetatag')
     );
   }
 
