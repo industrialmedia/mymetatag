@@ -7,6 +7,7 @@ use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\mymetatag\Entity\Mymetatag;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Path\CurrentPathStack;
@@ -16,9 +17,7 @@ use Drupal\Core\Cache\MemoryCache\MemoryCacheInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityRepositoryInterface;
-
-
-
+use Drupal\Core\Entity\EntityFormBuilderInterface;
 
 
 class MymetatagStorage extends SqlContentEntityStorage implements MymetatagStorageInterface {
@@ -54,6 +53,12 @@ class MymetatagStorage extends SqlContentEntityStorage implements MymetatagStora
    */
   protected $entityRepository;
 
+  /**
+   * The entity form builder service.
+   *
+   * @var \Drupal\Core\Entity\EntityFormBuilderInterface
+   */
+  protected $entityFormBuilder;
 
 
   /**
@@ -81,15 +86,18 @@ class MymetatagStorage extends SqlContentEntityStorage implements MymetatagStora
    *   The config factory.
    * @param \Drupal\Core\Routing\RouteProviderInterface $route_provider
    *   The route provider.
-   *  @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
+   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
    *   The entity repository.
+   * @param \Drupal\Core\Entity\EntityFormBuilderInterface $entity_form_builder
+   *   The entity form builder service.
    */
-  public function __construct(EntityTypeInterface $entity_type, Connection $database, EntityFieldManagerInterface $entity_field_manager, CacheBackendInterface $cache, LanguageManagerInterface $language_manager, MemoryCacheInterface $memory_cache = NULL, EntityTypeBundleInfoInterface $entity_type_bundle_info = NULL, EntityTypeManagerInterface $entity_type_manager = NULL, CurrentPathStack $current_path, ConfigFactoryInterface $config_factory, RouteProviderInterface $route_provider, EntityRepositoryInterface $entity_repository) {
+  public function __construct(EntityTypeInterface $entity_type, Connection $database, EntityFieldManagerInterface $entity_field_manager, CacheBackendInterface $cache, LanguageManagerInterface $language_manager, MemoryCacheInterface $memory_cache = NULL, EntityTypeBundleInfoInterface $entity_type_bundle_info = NULL, EntityTypeManagerInterface $entity_type_manager = NULL, CurrentPathStack $current_path, ConfigFactoryInterface $config_factory, RouteProviderInterface $route_provider, EntityRepositoryInterface $entity_repository, EntityFormBuilderInterface $entity_form_builder) {
     parent::__construct($entity_type, $database, $entity_field_manager, $cache, $language_manager, $memory_cache, $entity_type_bundle_info, $entity_type_manager);
     $this->currentPath = $current_path;
     $this->configFactory = $config_factory;
     $this->routeProvider = $route_provider;
     $this->entityRepository = $entity_repository;
+    $this->entityFormBuilder = $entity_form_builder;
   }
 
   /**
@@ -107,7 +115,7 @@ class MymetatagStorage extends SqlContentEntityStorage implements MymetatagStora
     $config_factory = $container->get('config.factory');
     $route_provider = $container->get('router.route_provider');
     $entity_repository = $container->get('entity.repository');
-
+    $entity_form_builder = $container->get('entity.form_builder');
     return new static(
       $entity_type,
       $database,
@@ -120,7 +128,8 @@ class MymetatagStorage extends SqlContentEntityStorage implements MymetatagStora
       $current_path,
       $config_factory,
       $route_provider,
-      $entity_repository
+      $entity_repository,
+      $entity_form_builder
     );
   }
 
@@ -128,7 +137,7 @@ class MymetatagStorage extends SqlContentEntityStorage implements MymetatagStora
   /**
    * {@inheritdoc}
    */
-  public function getMymetatagBySourcePath($source_path = NULL, $langcode = NULL) {
+  public function getMymetatagBySourcePath_notTranslation($source_path = NULL) {
     if (empty($source_path)) {
       $source_path = $this->currentPath->getPath();
     }
@@ -136,11 +145,28 @@ class MymetatagStorage extends SqlContentEntityStorage implements MymetatagStora
       'source_path' => $source_path,
     ]);
     if ($mymetatag = reset($mymetatags)) {
+      return $mymetatag;
+    }
+    return NULL;
+  }
+
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getMymetatagBySourcePath($source_path = NULL, $langcode = NULL) {
+    if ($mymetatag = $this->getMymetatagBySourcePath_notTranslation($source_path)) {
       if (empty($langcode)) {
         $langcode = $this->languageManager->getCurrentLanguage()->getId();
       }
-      $mymetatag = $this->entityRepository->getTranslationFromContext($mymetatag, $langcode);
-      return $mymetatag;
+
+      // $mymetatag = $this->entityRepository->getTranslationFromContext($mymetatag, $langcode); // Вернет даже
+      // если сушность не переведена на дурой язык, тогда будет загружен язык по дефолту - а это не правильно!!!
+
+      if ($mymetatag->hasTranslation($langcode)) {
+        $mymetatag = $mymetatag->getTranslation($langcode);
+        return $mymetatag;
+      }
     }
     return NULL;
   }
@@ -171,6 +197,32 @@ class MymetatagStorage extends SqlContentEntityStorage implements MymetatagStora
       }
     }
     return $new_paths;
+  }
+
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getMymetatagForm($path, $entity_type, $bundle, $entity_id) {
+    $langcode = $this->languageManager->getCurrentLanguage()->getId();
+    $mymetatag = $this->getMymetatagBySourcePath_notTranslation($path);
+    if (!$mymetatag) {
+      $mymetatag = Mymetatag::create([
+        'langcode' => $langcode,
+      ]);
+      $mymetatag->setSourcePath($path);
+      $mymetatag->setSourceEntityType($entity_type);
+      $mymetatag->setSourceBundle($bundle);
+      $mymetatag->setSourceEntityId($entity_id);
+    } else {
+      if ($mymetatag->hasTranslation($langcode)) {
+        $mymetatag = $mymetatag->getTranslation($langcode);
+      } else {
+        $mymetatag = $mymetatag->addTranslation($langcode);
+      }
+    }
+    $mymetatag_form = $this->entityFormBuilder->getForm($mymetatag, 'edit');
+    return $mymetatag_form;
   }
 
 

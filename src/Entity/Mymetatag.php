@@ -426,8 +426,8 @@ class Mymetatag extends ContentEntityBase implements MymetatagInterface {
       ->setSetting('handler', 'default')
       ->setTranslatable(TRUE);
 
-    $fields['langcode'] = BaseFieldDefinition::create('language')
-      ->setLabel(t('Language code'));
+    //$fields['langcode'] = BaseFieldDefinition::create('language') // Не нужно переопредилять!!! Уже сеть
+     // ->setLabel(t('Language code'));
 
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(t('Created'))
