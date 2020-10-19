@@ -1,7 +1,7 @@
 entity.mymetatag.collection:
   title: Метатеги по url
   route_name: entity.mymetatag.collection
-  parent: myapi.seo
+  parent: myseo
   description: 'List site metatags.'
   weight: 41
 
