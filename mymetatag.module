@@ -13,11 +13,18 @@ function mymetatag_preprocess_html(&$variables) {
   $mymetatag_storage = \Drupal::entityTypeManager()->getStorage('mymetatag');
   /* @var $mymetatag \Drupal\mymetatag\Entity\Mymetatag */
   $mymetatag = $mymetatag_storage->getMymetatagBySourcePath();
+
+  /* @var \Drupal\Core\Utility\Token $token */
+  $token = \Drupal::service('token');
+
+
   if ($mymetatag) {
 
     // head_title
     if (!empty($mymetatag->getHeadTitle())) {
-      $head_title_text = preg_replace('/\s{2,}/', ' ', $mymetatag->getHeadTitle());
+      $head_title_text = $mymetatag->getHeadTitle();
+      $head_title_text = $token->replace($head_title_text, [], array('clear' => TRUE));
+      $head_title_text = preg_replace('/\s{2,}/', ' ', $head_title_text);
       $head_title_text = trim($head_title_text);
       $variables['head_title'] = [];
       $variables['head_title']['title'] = Html::decodeEntities($head_title_text);
@@ -26,6 +33,7 @@ function mymetatag_preprocess_html(&$variables) {
     // description
     if (!empty($mymetatag->getDescription())) {
       $description_text = $mymetatag->getDescription();
+      $description_text = $token->replace($description_text, [], array('clear' => TRUE));
       $description_text = Html::decodeEntities($description_text);
       $description_text = str_replace('"', "'", $description_text);
       $description_text = preg_replace('/\s{2,}/', ' ', $description_text);
@@ -46,8 +54,7 @@ function mymetatag_preprocess_html(&$variables) {
       $robots_content = '';
       if ($noindex == 1) {
         $robots_content = 'noindex, follow';
-      }
-      elseif ($noindex == 2) {
+      } elseif ($noindex == 2) {
         $robots_content = 'noindex, nofollow';
       }
       if (!empty($robots_content)) {
@@ -68,15 +75,14 @@ function mymetatag_preprocess_html(&$variables) {
   // Хвост номер страницы
   $page_text = '';
   if (!empty($_GET['page'])) {
-    $_GET['page'] = (int) $_GET['page'];
+    $_GET['page'] = (int)$_GET['page'];
     $n = 1 + $_GET['page'];
     $page_text = ' (страница ' . $n . ')';
   }
   if (!empty($variables['head_title']) && $page_text) {
     if (is_array($variables['head_title'])) {
       $variables['head_title']['title'] .= $page_text;
-    }
-    else {
+    } else {
       $variables['head_title'] .= $page_text;
     }
   }
@@ -110,7 +116,12 @@ function mymetatag_preprocess_block(&$variables) {
     $mymetatag = $mymetatag_storage->getMymetatagBySourcePath();
     if ($mymetatag) {
       if (!empty($mymetatag->getTitleH1())) {
-        $title_h1_text = preg_replace('/\s{2,}/', ' ', $mymetatag->getTitleH1());
+        /* @var \Drupal\Core\Utility\Token $token */
+        $token = \Drupal::service('token');
+        
+        $title_h1_text = $mymetatag->getTitleH1();
+        $title_h1_text = $token->replace($title_h1_text, [], array('clear' => TRUE));
+        $title_h1_text = preg_replace('/\s{2,}/', ' ', $title_h1_text);
         $title_h1_text = trim($title_h1_text);
         $variables['content']['#title'] = $title_h1_text;
       }
@@ -136,7 +147,6 @@ function mymetatag_page_attachments_alter(array &$page) {
     }
   }
 }
-
 
 
 /**

@@ -88,6 +88,14 @@ class MymetatagForm extends ContentEntityForm {
         '#weight' => 99,
     );
     */
+    $form['token_tree'] = array(
+      '#theme' => 'token_tree_link',
+      '#token_types' => [],
+      '#show_restricted' => TRUE,
+      '#show_nested' => FALSE,
+      '#weight' => 500,
+    );
+    $form['actions']['#weight'] = 501;
     return $form;
   }
 
@@ -105,8 +113,7 @@ class MymetatagForm extends ContentEntityForm {
           '%feed' => $mymetatag->toLink()
             ->toString()
         ]));
-    }
-    else {
+    } else {
       $this->messenger()
         ->addStatus($this->t('The metatag %feed has been added.', [
           '%feed' => $mymetatag->toLink()

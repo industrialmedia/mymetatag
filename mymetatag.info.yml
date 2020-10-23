@@ -6,3 +6,6 @@ core_version_requirement: ^8 || ^9
 version: '1.0.0'
 
 configure: entity.mymetatag.collection
+
+dependencies:
+  - token
