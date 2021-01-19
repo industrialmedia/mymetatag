@@ -18,6 +18,7 @@ use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 
 class MymetatagStorage extends SqlContentEntityStorage implements MymetatagStorageInterface {
@@ -62,6 +63,14 @@ class MymetatagStorage extends SqlContentEntityStorage implements MymetatagStora
 
 
   /**
+   * The request stack.
+   *
+   * @var \Symfony\Component\HttpFoundation\RequestStack
+   */
+  protected $requestStack;
+
+
+  /**
    * Constructs a new CommerceContentEntityStorage object.
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
@@ -90,14 +99,17 @@ class MymetatagStorage extends SqlContentEntityStorage implements MymetatagStora
    *   The entity repository.
    * @param \Drupal\Core\Entity\EntityFormBuilderInterface $entity_form_builder
    *   The entity form builder service.
+   * @param \Symfony\Component\HttpFoundation\RequestStack $request_stack
+   *   The request stack.
    */
-  public function __construct(EntityTypeInterface $entity_type, Connection $database, EntityFieldManagerInterface $entity_field_manager, CacheBackendInterface $cache, LanguageManagerInterface $language_manager, MemoryCacheInterface $memory_cache = NULL, EntityTypeBundleInfoInterface $entity_type_bundle_info = NULL, EntityTypeManagerInterface $entity_type_manager = NULL, CurrentPathStack $current_path, ConfigFactoryInterface $config_factory, RouteProviderInterface $route_provider, EntityRepositoryInterface $entity_repository, EntityFormBuilderInterface $entity_form_builder) {
+  public function __construct(EntityTypeInterface $entity_type, Connection $database, EntityFieldManagerInterface $entity_field_manager, CacheBackendInterface $cache, LanguageManagerInterface $language_manager, MemoryCacheInterface $memory_cache = NULL, EntityTypeBundleInfoInterface $entity_type_bundle_info = NULL, EntityTypeManagerInterface $entity_type_manager = NULL, CurrentPathStack $current_path, ConfigFactoryInterface $config_factory, RouteProviderInterface $route_provider, EntityRepositoryInterface $entity_repository, EntityFormBuilderInterface $entity_form_builder, RequestStack $request_stack) {
     parent::__construct($entity_type, $database, $entity_field_manager, $cache, $language_manager, $memory_cache, $entity_type_bundle_info, $entity_type_manager);
     $this->currentPath = $current_path;
     $this->configFactory = $config_factory;
     $this->routeProvider = $route_provider;
     $this->entityRepository = $entity_repository;
     $this->entityFormBuilder = $entity_form_builder;
+    $this->requestStack = $request_stack;
   }
 
   /**
@@ -116,6 +128,8 @@ class MymetatagStorage extends SqlContentEntityStorage implements MymetatagStora
     $route_provider = $container->get('router.route_provider');
     $entity_repository = $container->get('entity.repository');
     $entity_form_builder = $container->get('entity.form_builder');
+    /** @var \Symfony\Component\HttpFoundation\RequestStack $request_stack */
+    $request_stack = $container->get('request_stack');
     return new static(
       $entity_type,
       $database,
@@ -129,7 +143,8 @@ class MymetatagStorage extends SqlContentEntityStorage implements MymetatagStora
       $config_factory,
       $route_provider,
       $entity_repository,
-      $entity_form_builder
+      $entity_form_builder,
+      $request_stack
     );
   }
 
@@ -137,10 +152,24 @@ class MymetatagStorage extends SqlContentEntityStorage implements MymetatagStora
   /**
    * {@inheritdoc}
    */
-  public function getMymetatagBySourcePath_notTranslation($source_path = NULL) {
+  public function getMymetatagBySourcePath_notTranslation($source_path = NULL, $get = NULL) {
+
     if (empty($source_path)) {
       $source_path = $this->currentPath->getPath();
+      $request = $this->requestStack->getCurrentRequest();
+      $get = $request->query->all();
     }
+
+    if ($get) {
+      $config = $this->configFactory->get('mymetatag.settings');
+      if ($config->get('is_ignore_GET')) {
+        return NULL;
+      }
+      if ($config->get('is_ignore_GET_page') && isset($get['page'])) {
+        return NULL;
+      }
+    }
+
     $mymetatags = $this->loadByProperties([
       'source_path' => $source_path,
     ]);

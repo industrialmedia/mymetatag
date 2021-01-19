@@ -16,7 +16,7 @@ interface MymetatagStorageInterface extends ContentEntityStorageInterface {
    * @param string|null $source_path
    * @return \Drupal\mymetatag\MymetatagInterface
    */
-  public function getMymetatagBySourcePath_notTranslation($source_path = NULL);
+  public function getMymetatagBySourcePath_notTranslation($source_path = NULL, $get = NULL);
 
   /**
    * Get translation mymetatag by source_path

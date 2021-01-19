@@ -77,6 +77,19 @@ class MymetatagSettingsForm extends ConfigFormBase implements ContainerInjection
                          Список системных путей, каждый с новой строки. <br />
                          Если надо добавить таб для шаблонного пути - добавте нужный роут, по аналогии mymetatag.admin.add_to_node, mymetatag.admin.add_to_term, ...',
     ];
+    $form['is_ignore_GET'] = [
+      '#type' => 'checkbox',
+      '#title' => 'Игнорировать страницы в которых не пустой GET',
+      '#description' => 'Если в урле страницы есть GET параметры, то метатеги на этот урл не будут добавлены',
+      '#default_value' => $config->get('is_ignore_GET'),
+    ];
+    $form['is_ignore_GET_page'] = [
+      '#type' => 'checkbox',
+      '#title' => "Игнорировать страницы в которых не пустой GET['page']",
+      '#description' => 'Если в урле страницы есть GET параметр page, то метатеги на этот урл не будут добавлены
+          (например если для пагинации сделано по шаблону)',
+      '#default_value' => $config->get('is_ignore_GET_page'),
+    ];
     return parent::buildForm($form, $form_state);
   }
 
@@ -93,19 +106,16 @@ class MymetatagSettingsForm extends ConfigFormBase implements ContainerInjection
         if (!empty($path)) {
           if ($this->pathIsValid($path)) {
             $valid[] = $path;
-          }
-          else {
+          } else {
             $invalid[] = $path;
           }
         }
       }
       if (empty($invalid)) {
         $form_state->set('paths', $valid);
-      }
-      elseif (count($invalid) == 1) {
+      } elseif (count($invalid) == 1) {
         $form_state->setErrorByName('paths', $this->t('%path is not a valid.', ['%path' => reset($invalid)]));
-      }
-      else {
+      } else {
         $form_state->setErrorByName('path', $this->t('%paths are not valid.', ['%paths' => implode(', ', $invalid)]));
       }
     }
@@ -119,6 +129,8 @@ class MymetatagSettingsForm extends ConfigFormBase implements ContainerInjection
     $config = $this->config('mymetatag.settings');
     $config
       ->set('custom_paths.paths', $form_state->get('paths'))
+      ->set('is_ignore_GET', $form_state->getValue('is_ignore_GET'))
+      ->set('is_ignore_GET_page', $form_state->getValue('is_ignore_GET_page'))
       ->save();
     drupal_flush_all_caches();
     parent::submitForm($form, $form_state);
