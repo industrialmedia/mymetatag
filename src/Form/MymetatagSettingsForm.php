@@ -77,6 +77,7 @@ class MymetatagSettingsForm extends ConfigFormBase implements ContainerInjection
                          Список системных путей, каждый с новой строки. <br />
                          Если надо добавить таб для шаблонного пути - добавте нужный роут, по аналогии mymetatag.admin.add_to_node, mymetatag.admin.add_to_term, ...',
     ];
+
     $form['is_ignore_GET'] = [
       '#type' => 'checkbox',
       '#title' => 'Игнорировать страницы в которых не пустой GET',
@@ -90,6 +91,21 @@ class MymetatagSettingsForm extends ConfigFormBase implements ContainerInjection
           (например если для пагинации сделано по шаблону)',
       '#default_value' => $config->get('is_ignore_GET_page'),
     ];
+
+    $form['suffix_page_number__text'] = [
+      '#type' => 'textfield',
+      '#title' => 'Суфикс пагинации',
+      '#default_value' => $config->get('suffix_page_number__text'),
+      '#description' => "Добавляется в конец метатегов Title и Description для страниц с паганациец. <br />
+       Если не заполнено будет использовано <em>(страница [n])</em>, <br />[n] = GET['page'] + 1 - номер страницы",
+    ];
+    $form['suffix_page_number__is_hidden'] = [
+      '#type' => 'checkbox',
+      '#title' => "Не добавлять суфикс пагинации",
+      '#description' => 'Пример у нас есть метатеги по шаблону, где уже добавлена пагинация, и не нужно дублировать',
+      '#default_value' => $config->get('suffix_page_number__is_hidden'),
+    ];
+
     return parent::buildForm($form, $form_state);
   }
 
@@ -131,6 +147,8 @@ class MymetatagSettingsForm extends ConfigFormBase implements ContainerInjection
       ->set('custom_paths.paths', $form_state->get('paths'))
       ->set('is_ignore_GET', $form_state->getValue('is_ignore_GET'))
       ->set('is_ignore_GET_page', $form_state->getValue('is_ignore_GET_page'))
+      ->set('suffix_page_number__text', $form_state->getValue('suffix_page_number__text'))
+      ->set('suffix_page_number__is_hidden', $form_state->getValue('suffix_page_number__is_hidden'))
       ->save();
     drupal_flush_all_caches();
     parent::submitForm($form, $form_state);

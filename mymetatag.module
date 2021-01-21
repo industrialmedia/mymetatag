@@ -73,29 +73,34 @@ function mymetatag_preprocess_html(&$variables) {
 
 
   // Хвост номер страницы
-  $page_text = '';
   if (!empty($_GET['page'])) {
-    $_GET['page'] = (int)$_GET['page'];
-    $n = 1 + $_GET['page'];
-    $page_text = ' (страница ' . $n . ')';
-  }
-  if (!empty($variables['head_title']) && $page_text) {
-    if (is_array($variables['head_title'])) {
-      $variables['head_title']['title'] .= $page_text;
-    } else {
-      $variables['head_title'] .= $page_text;
-    }
-  }
-  if (!empty($variables['#attached']['html_head'])) {
-    foreach ($variables['#attached']['html_head'] as $key => $value) {
-      if (!empty($value[1])) {
-        $name = $value[1];
-        switch ($name) {
-          case 'description':
-            if (!empty($variables['#attached']['html_head'][$key][0]['#attributes']['content']) && $page_text) {
-              $variables['#attached']['html_head'][$key][0]['#attributes']['content'] .= $page_text;
+    $config = \Drupal::config('mymetatag.settings');
+    if (empty($config->get('suffix_page_number__is_hidden'))) {
+      $page_text = '(' . t('страница') . ' [n])';
+      if (!empty($config->get('suffix_page_number__text'))) {
+        $page_text = $config->get('suffix_page_number__text');
+      }
+      $n = (int)$_GET['page'] + 1;
+      $page_text = str_replace('[n]', $n, $page_text);
+      if (!empty($variables['head_title'])) {
+        if (is_array($variables['head_title'])) {
+          $variables['head_title']['title'] .= ' ' . $page_text;
+        } else {
+          $variables['head_title'] .= ' ' . $page_text;
+        }
+      }
+      if (!empty($variables['#attached']['html_head'])) {
+        foreach ($variables['#attached']['html_head'] as $key => $value) {
+          if (!empty($value[1])) {
+            $name = $value[1];
+            switch ($name) {
+              case 'description':
+                if (!empty($variables['#attached']['html_head'][$key][0]['#attributes']['content'])) {
+                  $variables['#attached']['html_head'][$key][0]['#attributes']['content'] .= ' ' . $page_text;
+                }
+                break;
             }
-            break;
+          }
         }
       }
     }
@@ -118,7 +123,7 @@ function mymetatag_preprocess_block(&$variables) {
       if (!empty($mymetatag->getTitleH1())) {
         /* @var \Drupal\Core\Utility\Token $token */
         $token = \Drupal::service('token');
-        
+
         $title_h1_text = $mymetatag->getTitleH1();
         $title_h1_text = $token->replace($title_h1_text, [], array('clear' => TRUE));
         $title_h1_text = preg_replace('/\s{2,}/', ' ', $title_h1_text);

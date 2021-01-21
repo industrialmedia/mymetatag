@@ -9,7 +9,8 @@ use Drupal\Core\Config\Entity\DraggableListBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
-
+use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\myroute_metatag\Entity\MyrouteMetatag;
 
 /**
  * Provides a listing of MyrouteMetatag entities.
@@ -22,6 +23,7 @@ class MyrouteMetatagListBuilder extends DraggableListBuilder {
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   protected $configFactory;
+
 
   /**
    * The view cols.
@@ -101,6 +103,12 @@ class MyrouteMetatagListBuilder extends DraggableListBuilder {
    */
   public function buildRow(EntityInterface $entity) {
     /* @var \Drupal\myroute_metatag\Entity\MyrouteMetatag $entity */
+
+
+    // После этих манипуляций получаем сушность на нужном языке, а не на дефолтном
+    // метода hasTranslation в ConfigEntityBase нет (он только для ContentEntityBase)
+    $entity = MyrouteMetatag::load($entity->id());
+
     $row['label'] = $entity->label();
     $items = $entity->getItems();
     // route_name

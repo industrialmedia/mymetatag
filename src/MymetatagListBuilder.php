@@ -12,6 +12,7 @@ use Drupal\Core\Url;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
 
 
 /**
@@ -28,11 +29,20 @@ class MymetatagListBuilder extends EntityListBuilder {
   protected $configFactory;
 
   /**
-   * The view cols.
+   * The language manager.
    *
-   * @var array
+   * @var \Drupal\Core\Language\LanguageManagerInterface
    */
-  protected $viewCols;
+  protected $languageManager;
+
+
+  /**
+   * The current langcode.
+   *
+   * @var string
+   */
+  protected $langcode;
+
 
   /**
    * The form builder.
@@ -43,6 +53,13 @@ class MymetatagListBuilder extends EntityListBuilder {
 
 
   /**
+   * The view cols.
+   *
+   * @var array
+   */
+  protected $viewCols;
+
+  /**
    * Constructs a new SlickListBuilder object.
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
@@ -51,16 +68,22 @@ class MymetatagListBuilder extends EntityListBuilder {
    *   The entity storage class.
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory.
+   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
+   *   The language manager.
    * @param \Drupal\Core\Form\FormBuilderInterface $form_builder
    *   The form builder.
    */
-  public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $storage, ConfigFactoryInterface $config_factory, FormBuilderInterface $form_builder) {
+  public function __construct(EntityTypeInterface $entity_type, EntityStorageInterface $storage, ConfigFactoryInterface $config_factory, LanguageManagerInterface $language_manager, FormBuilderInterface $form_builder) {
     parent::__construct($entity_type, $storage);
     $this->configFactory = $config_factory;
+    $this->languageManager = $language_manager;
+    $this->langcode = $this->languageManager->getCurrentLanguage()->getId();
+    $this->formBuilder = $form_builder;
+
     $config = $this->configFactory->get('mymetatag.settings');
     $view_cols = $config->get('list.view_cols');
     $this->viewCols = $view_cols ? $view_cols : [];
-    $this->formBuilder = $form_builder;
+
   }
 
   /**
@@ -69,12 +92,15 @@ class MymetatagListBuilder extends EntityListBuilder {
   public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
     /* @var \Drupal\Core\Config\ConfigFactoryInterface $config_factory */
     $config_factory = $container->get('config.factory');
+    /* @var \Drupal\Core\Language\LanguageManagerInterface $language_manager */
+    $language_manager = $container->get('language_manager');
     /* @var \Drupal\Core\Form\FormBuilderInterface $form_builder */
     $form_builder = $container->get('form_builder');
     return new static(
       $entity_type,
       $container->get('entity_type.manager')->getStorage($entity_type->id()),
       $config_factory,
+      $language_manager,
       $form_builder
     );
   }
@@ -124,6 +150,11 @@ class MymetatagListBuilder extends EntityListBuilder {
    */
   public function buildRow(EntityInterface $mymetatag) {
     /* @var $mymetatag \Drupal\mymetatag\Entity\Mymetatag */
+
+    if ($mymetatag->hasTranslation($this->langcode)) {
+      $mymetatag = $mymetatag->getTranslation($this->langcode);
+    }
+
     $row = [];
     // id
     if (in_array('id', $this->viewCols)) {
