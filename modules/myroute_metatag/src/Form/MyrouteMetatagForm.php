@@ -106,6 +106,7 @@ class MyrouteMetatagForm extends EntityForm implements ContainerInjectionInterfa
       '#default_value' => $myroute_metatag->getRouteName(),
       '#required' => TRUE,
       '#autocomplete_route_name' => 'myroute_metatag.router_autocomplete',
+      '#description' => 'Если правило не зависит от роута, испльзуйте <strong>none</strong> (не рекомендуется, но иногда полезно для метатегов по дефолту)',
     ];
     if (!$myroute_metatag->isNew()) {
       $form['items_section'] = $this->createItemsSet($form, $form_state, $myroute_metatag);

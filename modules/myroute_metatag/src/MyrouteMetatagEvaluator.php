@@ -73,8 +73,14 @@ class MyrouteMetatagEvaluator {
 
   public function evaluateByRouteName($route_name) {
     if (!isset($this->evaluations_by_route_name[$route_name])) {
-      $myroute_metatags = $this->entityTypeManager->getStorage('myroute_metatag')
-        ->loadByProperties(['route_name' => $route_name]);
+
+      //$myroute_metatags = $this->entityTypeManager->getStorage('myroute_metatag')
+        //->loadByProperties(['route_name' => $route_name]);
+
+      $query = \Drupal::entityQuery('myroute_metatag')
+        ->condition('route_name', [$route_name, 'none'], 'IN');
+      $ids = $query->execute();
+      $myroute_metatags = $this->entityTypeManager->getStorage('myroute_metatag')->loadMultiple($ids);
 
       uasort($myroute_metatags, function (MyrouteMetatag $a, MyrouteMetatag $b) {
         $a = $a->getWeight();
